@@ -1,5 +1,5 @@
-public class Test {
+public class test {
     public static void main(String[] args) {
-        System.out.println("Yeu Nguyen Ngoc Anh");
+        System.out.println("10 điểm BTL");
     }
 }
