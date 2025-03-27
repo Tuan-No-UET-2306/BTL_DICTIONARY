@@ -1,5 +1,5 @@
-public class test {
+public class Test {
     public static void main(String[] args) {
-        System.out.println("Yeu Nguyen Ngoc Anh anh cai lon me ong");
+        System.out.println("Yeu Nguyen Ngoc Anh");
     }
 }
