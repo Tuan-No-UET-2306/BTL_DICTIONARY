@@ -1,6 +1,5 @@
-public class Test {
+public class test {
     public static void main(String[] args) {
-        System.out.println("Dit con me em trunglon" +
-                "i");
+        System.out.println("Yeu Nguyen Ngoc Anh anh cai lon me ong");
     }
 }
