@@ -8,7 +8,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="front_end.GameTab"
+            fx:controller="controllers.GameTabController"
             prefHeight="400.0" prefWidth="600.0">
 
 </AnchorPane>
