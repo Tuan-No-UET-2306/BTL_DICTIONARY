@@ -15,5 +15,9 @@ public class MainController {
 
     public void setL1(ActionEvent event) {
         l1.setText("abc");
+
+        System.out.println("abc");
     }
+
+
 }
