@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.dictionary.MainDictionaryController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="748.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.MainDictionaryController">
+   <children>
+      <AnchorPane layoutY="5.0" prefHeight="758.0" prefWidth="250.0">
+         <children>
+            <TextField fx:id="searchBox" layoutX="-1.0" layoutY="9.0" prefHeight="49.0" prefWidth="254.0" promptText="Tra Từ: " />
+            <ListView layoutY="78.0" prefHeight="670.0" prefWidth="254.0" />
+            <Button fx:id="addButton" layoutX="179.0" layoutY="20.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="74.0" text="Thêm từ" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="268.0" layoutY="5.0" prefHeight="748.0" prefWidth="876.0">
+         <children>
+            <BorderPane prefHeight="748.0" prefWidth="866.0">
+               <bottom>
+                  <AnchorPane prefHeight="679.0" prefWidth="890.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Line endX="884.5999755859375" endY="34.19999694824219" startX="-1.0" startY="34.19999694824219" />
+                        <TextArea layoutY="36.0" prefHeight="670.0" prefWidth="890.0" />
+                     </children>
+                  </AnchorPane>
+               </bottom></BorderPane>
+            <AnchorPane prefHeight="0.0" prefWidth="890.0">
+               <children>
+                  <HBox layoutY="13.0" prefHeight="41.0" prefWidth="232.0">
+                     <children>
+                        <Label fx:id="wifaLabel" contentDisplay="CENTER" prefHeight="54.0" prefWidth="78.0" text="\@Test">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="speakButotn" mnemonicParsing="false" opacity="0.0" prefHeight="53.0" prefWidth="83.0" text="Phát âm">
+                           <tooltip>
+                              <Tooltip text="Empty Tooltip" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <AnchorPane prefHeight="55.0" prefWidth="200.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
 </AnchorPane>
