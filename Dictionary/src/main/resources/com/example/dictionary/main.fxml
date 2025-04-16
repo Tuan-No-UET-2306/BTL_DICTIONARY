@@ -2,35 +2,26 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="834.0" prefWidth="1227.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.MainController">
    <top>
       <HBox prefHeight="45.0" prefWidth="1227.0" BorderPane.alignment="CENTER">
          <children>
             <Region prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" />
             <Region prefHeight="46.0" prefWidth="294.0" style="-fx-background-color: yellow;" />
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="58.0" prefWidth="160.0" style="-fx-background-color: yellow;" text=" TỪ ĐIỂN T-FLat" textFill="#105121">
+            <Label alignment="BOTTOM_LEFT" contentDisplay="CENTER" prefHeight="45.0" prefWidth="260.0" style="-fx-background-color: yellow;" text="BaChuTeEnglish" textFill="#105121">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
             <Region prefHeight="46.0" prefWidth="360.0" style="-fx-background-color: yellow;" />
-            <Button fx:id="MiniButton" mnemonicParsing="false" prefHeight="46.0" prefWidth="104.0" text="Mini">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Button>
-            <Button fx:id="closeButton" mnemonicParsing="false" prefHeight="58.0" prefWidth="114.0" text="Close">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Button>
          </children>
       </HBox>
    </top>
@@ -38,25 +29,53 @@
       <VBox prefHeight="789.0" prefWidth="99.0" spacing="12.0" style="-fx-background-color: green;" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" opacity="0.0" prefHeight="78.0" prefWidth="100.0" text="Button" />
-            <Button fx:id="homeButton" mnemonicParsing="false" prefHeight="89.0" prefWidth="99.0" style="-fx-background-color: green;" text="Home">
+            <Button fx:id="homeButton" mnemonicParsing="false" onAction="#handle" prefHeight="89.0" prefWidth="99.0" style="-fx-background-color: green;">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
+               <graphic>
+                  <ImageView fitHeight="117.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/LoGo/home.gif" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-            <Button fx:id="dicButton" mnemonicParsing="false" prefHeight="95.0" prefWidth="99.0" style="-fx-background-color: green;" text="Main Dictionary">
+            <Button fx:id="dicButton" mnemonicParsing="false" onAction="#handle" prefHeight="95.0" prefWidth="99.0" style="-fx-background-color: green;">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
+               <graphic>
+                  <ImageView fitHeight="110.0" fitWidth="106.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/LoGo/book.gif" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-            <Button fx:id="transButton" mnemonicParsing="false" prefHeight="92.0" prefWidth="99.0" style="-fx-background-color: green;" text="Google Translate">
+            <Button fx:id="transButton" mnemonicParsing="false" onAction="#handle" prefHeight="92.0" prefWidth="118.0" style="-fx-background-color: green;">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
+               <graphic>
+                  <ImageView fitHeight="91.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/LoGo/google_translate.gif" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-            <Button fx:id="gameButton" mnemonicParsing="false" prefHeight="107.0" prefWidth="99.0" style="-fx-background-color: green;" text="Game">
+            <Button fx:id="gameButton" mnemonicParsing="false" onAction="#handle" prefHeight="107.0" prefWidth="99.0" style="-fx-background-color: green;" text="Game">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
+               <graphic>
+                  <ImageView fitHeight="150.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/LoGo/game.gif" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
          </children>
       </VBox>
