@@ -7,10 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -27,26 +25,26 @@ public class MainController implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent event) {
-            homeButton.setOnAction(e -> {
-                try {
-                    Parent nextStage = FXMLLoader.load(Objects.requireNonNull
-                            (getClass().getResource("home_tab.fxml")));
-                    Scene nextScene = new Scene(nextStage);
+        homeButton.setOnAction(e -> {
+            try {
+                Parent nextStage = FXMLLoader.load(Objects.requireNonNull
+                        (getClass().getResource("home_tab.fxml")));
+                Scene nextScene = new Scene(nextStage);
 
-                    // Tạo Stage mới
-                    Stage newStage = new Stage();
-                    newStage.setScene(nextScene);
-                    newStage.setTitle("HomeTab");
-                    newStage.show();
+                // Tạo Stage mới
+                Stage newStage = new Stage();
+                newStage.setScene(nextScene);
+                newStage.setTitle("HomeTab");
+                newStage.show();
 
-                    // Đóng Stage cũ
-                    Stage currentStage = (Stage) homeButton.getScene().getWindow();
-                    currentStage.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                // Đóng Stage cũ
+                Stage currentStage = (Stage) homeButton.getScene().getWindow();
+                currentStage.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
 
-            });
+        });
         dicButton.setOnAction(e -> {
             try {
                 Parent nextStage = FXMLLoader.load(Objects.requireNonNull
@@ -87,23 +85,23 @@ public class MainController implements EventHandler<ActionEvent> {
             }
 
         });
-            transButton.setOnAction(e -> {
-                try {
-                    Parent nextStage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("google_tab.fxml")));
-                    Scene nextScene = new Scene(nextStage);
+        transButton.setOnAction(e -> {
+            try {
+                Parent nextStage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("google_tab.fxml")));
+                Scene nextScene = new Scene(nextStage);
 
-                    // Tạo Stage mới
-                    Stage newStage = new Stage();
-                    newStage.setScene(nextScene);
-                    newStage.setTitle("Google Tab");
-                    newStage.show();
+                // Tạo Stage mới
+                Stage newStage = new Stage();
+                newStage.setScene(nextScene);
+                newStage.setTitle("Google Tab");
+                newStage.show();
 
-                    // Đóng Stage cũ
-                    Stage currentStage = (Stage) transButton.getScene().getWindow();
-                    currentStage.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
+                // Đóng Stage cũ
+                Stage currentStage = (Stage) transButton.getScene().getWindow();
+                currentStage.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -10,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="649.0" prefWidth="1002.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.MainController">
    <top>
       <HBox prefHeight="45.0" prefWidth="1227.0" BorderPane.alignment="CENTER">
          <children>
@@ -80,4 +81,14 @@
          </children>
       </VBox>
    </left>
+   <center>
+      <ImageView fitHeight="609.0" fitWidth="909.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+         <image>
+            <Image url="@../../../picture/LoGo/mainBackGround.png" />
+         </image>
+         <viewport>
+            <Rectangle2D />
+         </viewport>
+      </ImageView>
+   </center>
 </BorderPane>
