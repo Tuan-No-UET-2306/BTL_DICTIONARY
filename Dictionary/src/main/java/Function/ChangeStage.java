@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,6 +21,9 @@ public class ChangeStage {
             Stage newStage = new Stage();
             newStage.setScene(nextScene);
             newStage.setTitle("BaChuTeEnglish");
+            Image icon = new Image
+                    ("D:\\BaiTapLon\\Dictionary\\src\\main\\resources\\picture\\LoGo\\icon.png");
+            newStage.getIcons().add(icon);
             newStage.show();
 
             // Đóng Stage cũ
