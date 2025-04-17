@@ -78,6 +78,11 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Button fx:id="transButton1" layoutX="10.0" layoutY="308.0" mnemonicParsing="false" onAction="#handle" prefHeight="92.0" prefWidth="118.0" style="-fx-background-color: green;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
          </children>
       </VBox>
    </left>

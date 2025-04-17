@@ -16,7 +16,7 @@
             <TextArea layoutX="-7.0" layoutY="90.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="206.0" prefWidth="983.0" />
             <HBox layoutX="11.0" prefHeight="51.0" prefWidth="962.0">
                <children>
-                  <Button fx:id="exitTrans" minWidth="43.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="43.0">
+                  <Button fx:id="exitTrans" minWidth="43.0" mnemonicParsing="false" onAction="#handle" prefHeight="28.0" prefWidth="43.0">
                      <graphic>
                         <ImageView fitHeight="34.0" fitWidth="37.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
                            <image>
