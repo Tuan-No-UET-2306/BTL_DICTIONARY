@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.dictionary.QuizzController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.QuizzController">
+   <children>
+      <Label alignment="TOP_LEFT" layoutX="28.0" layoutY="67.0" opacity="0.45" prefHeight="220.0" prefWidth="948.0" style="-fx-background-color: green; -fx-background-radius: 20; -fx-padding: 20;" wrapText="true">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="quesLable" alignment="CENTER" layoutX="42.0" layoutY="75.0" prefHeight="202.0" prefWidth="914.0" wrapText="true">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <Button fx:id="ansA" layoutX="131.0" layoutY="334.0" mnemonicParsing="false" onAction="#handle" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #d40000, #f88); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
+      <Button fx:id="ansD" layoutX="559.0" layoutY="523.0" mnemonicParsing="false" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #2ca44f, #b6f5c6); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
+      <Button fx:id="ansC" layoutX="139.0" layoutY="521.0" mnemonicParsing="false" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #0088ff, #aaddff); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
+      <Button fx:id="ansB" layoutX="542.0" layoutY="335.0" mnemonicParsing="false" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #ffcc00, #ffffcc); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
+      <Label alignment="CENTER" layoutX="408.0" layoutY="2.0" prefHeight="64.0" prefWidth="174.0" style="-fx-background-color: linear-gradient(to right, #2ca44f, #b6f5c6); -fx-background-radius: 25;" text="BaChuTeEnglish">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <Button fx:id="exitQuizz" layoutX="31.0" layoutY="5.0" mnemonicParsing="false" onAction="#handle" prefHeight="39.0" prefWidth="26.0">
+         <graphic>
+            <ImageView fitHeight="36.0" fitWidth="42.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../picture/LogoButton/exit.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="754.0" layoutY="17.0" mnemonicParsing="false" style="-fx-background-color: white;" />
+      <ImageView fitHeight="49.0" fitWidth="69.0" layoutX="748.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../picture/GameLogo/next.png" />
+         </image>
+      </ImageView>
+   </children>
 </AnchorPane>
