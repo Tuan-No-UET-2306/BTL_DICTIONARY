@@ -19,11 +19,19 @@
       <artifactId>javafx-controls</artifactId>
       <version>17.0.6</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20231013</version> <!-- Sử dụng phiên bản mới nhất -->
+    </dependency>
+
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>17.0.6</version>
     </dependency>
+
 
 <dependency>
       <groupId>org.junit.jupiter</groupId>

@@ -21,9 +21,9 @@ public class ChangeStage {
             Stage newStage = new Stage();
             newStage.setScene(nextScene);
             newStage.setTitle("BaChuTeEnglish");
-            Image icon = new Image
-                    ("D:\\BaiTapLon\\Dictionary\\src\\main\\resources\\picture\\LoGo\\icon.png");
-            newStage.getIcons().add(icon);
+            //Image icon = new Image
+                  //  ("D:\\BaiTapLon\\Dictionary\\src\\main\\resources\\picture\\LoGo\\icon.png");
+           // newStage.getIcons().add(icon);
             newStage.show();
 
             // Đóng Stage cũ

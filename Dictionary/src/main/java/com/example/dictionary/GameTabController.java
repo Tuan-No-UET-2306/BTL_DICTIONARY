@@ -20,6 +20,9 @@ public class GameTabController implements EventHandler<ActionEvent> {
         exitGame.setOnAction(e -> {
             ChangeStage.changeStage(exitGame, "main.fxml", getClass());
         });
+        ctwButton.setOnAction(e -> {
+            ChangeStage.changeStage(ctwButton,"wordlegame.fxml",getClass());
+        });
         quizzButton.setOnAction(e -> {
             ChangeStage.changeStage(quizzButton,"quizz_game.fxml",getClass());
         });

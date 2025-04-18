@@ -17,13 +17,17 @@ public class DictionaryApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
         Scene scene = new Scene(root);
+        String css = Objects.requireNonNull(this.getClass().getResource("styles.css")).toExternalForm();
+        scene.getStylesheets().add(css);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("BaChuTeEnglish");
-        Image icon = new Image
-                ("D:\\BaiTapLon\\Dictionary\\src\\main\\resources\\picture\\LoGo\\icon.png");
-        primaryStage.getIcons().add(icon);
+        primaryStage.setTitle("Đăng nhập");
+      //  Image icon = new Image
+//("D:\\BaiTapLon\\Dictionary\\src\\main\\resources\\picture\\LoGo\\icon.png");
+       // primaryStage.getIcons().add(icon);
         primaryStage.show();
     }
+
+
 }

@@ -1,0 +1,112 @@
+/* quiz_styles.css */
+
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #e0f2f7, #b3e5fc); /* Màu nền xanh dương nhạt */
+    -fx-font-family: "Arial", sans-serif; /* Font chữ mặc định */
+}
+
+#questionLabel {
+    -fx-text-fill: #01579b; /* Màu chữ xanh đậm cho câu hỏi */
+    -fx-padding: 10px;
+}
+
+#scoreLabel {
+    -fx-text-fill: #004d40; /* Màu xanh lá cây đậm cho điểm */
+}
+
+/* Kiểu mặc định cho các nút trả lời */
+.button {
+    -fx-background-color: #ffffff; /* Nền trắng */
+    -fx-text-fill: #333333; /* Chữ đen */
+    -fx-border-color: #cccccc; /* Viền xám nhạt */
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand; /* Con trỏ hình bàn tay */
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.1) , 5, 0.0 , 0 , 1 ); /* Đổ bóng nhẹ */
+}
+
+/* Kiểu khi di chuột qua nút */
+.button:hover {
+    -fx-background-color: #e8f5e9; /* Nền xanh lá rất nhạt khi hover */
+    -fx-border-color: #81c784;
+}
+
+/* Kiểu khi nút bị vô hiệu hóa */
+.button:disabled {
+    -fx-opacity: 0.6; /* Làm mờ nút */
+    -fx-cursor: default; /* Con trỏ mặc định */
+}
+
+/* Kiểu cho nút trả lời ĐÚNG */
+.correct-answer {
+    -fx-background-color: #4CAF50; /* Màu xanh lá cây */
+    -fx-text-fill: white; /* Chữ trắng */
+    -fx-border-color: #388E3C; /* Viền xanh lá đậm hơn */
+    -fx-font-weight: bold;
+}
+.correct-answer:hover {
+    -fx-background-color: #66BB6A; /* Sáng hơn khi hover */
+    -fx-border-color: #388E3C;
+}
+
+/* Kiểu cho nút trả lời SAI */
+.incorrect-answer {
+    -fx-background-color: #F44336; /* Màu đỏ */
+    -fx-text-fill: white; /* Chữ trắng */
+    -fx-border-color: #D32F2F; /* Viền đỏ đậm hơn */
+}
+.incorrect-answer:hover {
+    -fx-background-color: #EF5350; /* Sáng hơn khi hover */
+    -fx-border-color: #D32F2F;
+}
+
+
+/* Kiểu cho label feedback */
+#feedbackLabel {
+    -fx-padding: 10px 0;
+    -fx-font-weight: bold;
+}
+
+/* Màu chữ cho feedback đúng */
+.feedback-correct {
+    -fx-text-fill: #388E3C; /* Xanh lá cây đậm */
+}
+
+/* Màu chữ cho feedback sai */
+.feedback-incorrect {
+    -fx-text-fill: #D32F2F; /* Đỏ đậm */
+}
+
+/* Kiểu cho nút Next và Restart */
+#nextButton, #restartButton {
+    -fx-background-color: #0288d1; /* Xanh dương */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: #0277bd;
+}
+
+#nextButton:hover, #restartButton:hover {
+    -fx-background-color: #03a9f4; /* Xanh dương sáng hơn */
+    -fx-border-color: #0288d1;
+}
+
+#nextButton:disabled {
+    -fx-background-color: #90caf9; /* Màu xanh nhạt hơn khi bị vô hiệu */
+    -fx-border-color: #64b5f6;
+    -fx-opacity: 0.7;
+}
+
+/* Kiểu cho phần kết quả */
+#resultsPane {
+    -fx-background-color: rgba(255, 255, 255, 0.8); /* Nền trắng mờ */
+    -fx-padding: 30px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2) , 10, 0.0 , 0 , 2 );
+}
+
+#finalScoreLabel {
+    -fx-text-fill: #01579b; /* Màu xanh đậm */
+}

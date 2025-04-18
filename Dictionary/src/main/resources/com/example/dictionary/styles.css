@@ -1,0 +1,85 @@
+/* Apply styles to the root pane (StackPane) */
+#rootPane {
+    /* Approximate background inspired by the image */
+    -fx-background-color: linear-gradient(to bottom, #fdf6e3, #d4eac4);
+}
+
+/* Style the main VBox holding the form */
+#formVBox {
+    /* Add a subtle background to make it look like a base, can be improved with images */
+    -fx-background-color: rgba(160, 118, 72, 0.3); /* Light transparent brown */
+    -fx-background-radius: 15;
+    -fx-border-color: #8b5a2b; /* Darker brown border */
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.5, 0, 2); /* Add shadow */
+}
+
+/* Style the HBoxes that act as 'planks' for inputs */
+.input-plank {
+    -fx-background-color: #d2a679; /* Wooden plank color */
+    -fx-background-radius: 10;
+    -fx-padding: 8px 15px; /* Padding inside the plank */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0.2, 0, 1);
+}
+.button-plank {
+    -fx-background-color: #b88a5c; /* Slightly different wood color for button plank */
+    -fx-background-radius: 10;
+    -fx-padding: 10px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0.2, 0, 1);
+}
+
+
+/* Style the Labels "Username", "Password" */
+.label-prompt {
+    -fx-background-color: #f5e6a1; /* Yellowish background */
+    -fx-background-radius: 8;
+    -fx-padding: 5px 10px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6b4f2d; /* Dark brown text */
+    -fx-min-width: 80px; /* Ensure labels have similar width */
+    -fx-alignment: center;
+}
+
+/* Style the TextFields and PasswordFields */
+.text-input-field {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #c0c0c0; /* Light grey border */
+    -fx-border-radius: 8;
+    -fx-border-width: 1px;
+    -fx-font-size: 13px;
+    -fx-padding: 5px 8px;
+    -fx-prompt-text-fill: #a9a9a9; /* Grey placeholder text */
+}
+
+/* Style the Buttons */
+.action-button {
+    -fx-background-color: #acc68a; /* Greenish background */
+    -fx-background-radius: 8;
+    -fx-text-fill: #4d5c34; /* Dark green text */
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand; /* Change cursor on hover */
+}
+
+.action-button:hover {
+    -fx-background-color: #bdd6a0; /* Lighter green on hover */
+}
+
+.action-button:pressed {
+    -fx-background-color: #9cb67a; /* Darker green when pressed */
+}
+
+/* Style the message label */
+.message-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: red; /* Default error color */
+    -fx-alignment: center;
+    -fx-min-height: 20px; /* Reserve space for messages */
+}
+
+.quizz {
+}

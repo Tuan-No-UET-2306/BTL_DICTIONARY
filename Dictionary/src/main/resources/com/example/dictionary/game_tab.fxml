@@ -18,7 +18,7 @@
             <GaussianBlur radius="16.63" />
          </effect>
       </ImageView>
-      <Button fx:id="ctwButton" layoutX="203.0" layoutY="199.0" mnemonicParsing="false" prefHeight="227.0" prefWidth="215.0">
+      <Button fx:id="ctwButton" layoutX="203.0" layoutY="199.0" mnemonicParsing="false" onAction="#handle" prefHeight="227.0" prefWidth="215.0">
          <graphic>
             <ImageView fitHeight="235.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                <image>
