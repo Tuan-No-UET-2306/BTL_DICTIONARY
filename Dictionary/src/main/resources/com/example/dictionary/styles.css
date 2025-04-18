@@ -81,5 +81,87 @@
     -fx-min-height: 20px; /* Reserve space for messages */
 }
 
+/* Placeholder for quizz styles if needed specifically */
 .quizz {
+    /* Add specific styles for the quizz container if needed */
+}
+
+/* ============================================= */
+/* == PHẦN MỚI: STYLE CHO VBOX THÔNG BÁO KẾT QUẢ QUIZ == */
+/* ============================================= */
+
+.result-vbox {
+    /* Nền gradient xanh lá (chung) */
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #68c76c, #4caf50);
+    /* Viền ngoài màu nâu/vàng đất */
+    -fx-border-color: #a1887f;
+    -fx-border-width: 4;
+    -fx-border-radius: 8;
+    -fx-background-radius: 10; /* Phải lớn hơn hoặc bằng border-radius */
+
+    -fx-padding: 25px; /* Padding bên trong VBox */
+    -fx-alignment: center; /* Căn giữa các thành phần con */
+    -fx-spacing: 15px; /* Khoảng cách dọc giữa các thành phần */
+
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0.1, 3, 5); /* Bóng đổ rõ hơn */
+}
+
+/* Class riêng cho màu nền khi trả lời đúng */
+.result-vbox-correct {
+    /* Giữ gradient mặc định hoặc tùy chỉnh nếu muốn */
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #68c76c, #4caf50);
+    -fx-border-color: #a1887f; /* Đảm bảo viền đúng */
+}
+/* Class riêng cho màu nền khi trả lời sai */
+.result-vbox-incorrect {
+    /* Ví dụ: đổi sang màu hơi đỏ/cam */
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #ff8a65, #ff7043);
+    -fx-border-color: #bf360c; /* Viền đậm hơn */
+}
+
+
+/* Style cho tiêu đề (CONGRATULATIONS! / RẤT TIẾC!) */
+.result-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(one-pass-box, black, 2, 0.5, 1, 1); /* Bóng đổ nhẹ cho text */
+}
+
+/* Style cho nội dung chi tiết */
+.result-details {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-text-alignment: center; /* Căn giữa text nếu có nhiều dòng */
+    -fx-line-spacing: 4px;
+}
+
+/* Style cho nút NEXT trong VBox */
+.result-next-button {
+    /* Gradient xanh dương nhạt */
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #e1f5fe, #b3e5fc);
+    -fx-text-fill: #01579b; /* Màu chữ xanh đậm */
+    -fx-font-weight: bold;
+    -fx-font-size: 18px; /* To hơn một chút */
+
+    /* Viền trong màu xanh nhạt hơn */
+    -fx-border-color: #81d4fa;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 4;
+    -fx-background-radius: 5;
+
+    -fx-padding: 10px 30px 10px 30px; /* Padding lớn hơn */
+
+    /* Hiệu ứng viền ngoài xám giả lập */
+    -fx-effect: innershadow(two-pass-box , rgba(150,150,150,0.5) , 4, 0.0 , 1, 1);
+    -fx-border-style: solid;
+}
+
+.result-next-button:hover {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #cbeffe, #a0dffd);
+    -fx-effect: innershadow(two-pass-box , rgba(120,120,120,0.6) , 5, 0.0 , 1, 2);
+}
+
+.result-next-button:pressed {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #a0dffd, #cbeffe);
 }

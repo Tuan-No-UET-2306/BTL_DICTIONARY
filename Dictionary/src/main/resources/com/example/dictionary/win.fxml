@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="300" prefWidth="400" style="-fx-background-radius: 30; -fx-background-color: transparent;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.WinController">
-   <stylesheets>
-      <URL value="@../../../../../../../../BTLTK/EnglishApp/src/main/resources/front_end/css/bootstrapfx.css" />
-   </stylesheets>
-   <center>
-      <VBox alignment="CENTER" prefHeight="302.0" prefWidth="404.0" spacing="15" style="-fx-background-color: linear-gradient(to bottom, #2ca44f, #b6f5c6); -fx-background-radius: 20;">
-         <children>
-            <Label alignment="CENTER" styleClass="h1, strong" text="CONGRATULATIONS!" textFill="WHITE" />
-            <Line endX="400" stroke="WHITE" />
-            <Label id="winMessage" styleClass="lead, big-font" text="Your win message here" textFill="WHITE" />
-            <Label id="winWord" styleClass="h1, strong" text="Your winning word here" textFill="WHITE" />
-            <Button mnemonicParsing="false">
-               <graphic>
-                  <ImageView fx:id="nextQues" fitHeight="43.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: 20;">
-                     <image>
-                        <Image url="@../../../picture/GameLogo/nextques.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </VBox>
-   </center>
-</BorderPane>
+<VBox fx:id="notificationRootVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="15.0" styleClass="result-vbox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="titleLabel" text="[Tiêu đề Kết quả]" textAlignment="CENTER" styleClass="result-title">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <Label fx:id="detailsLabel" text="[Nội dung chi tiết và đáp án đúng]" textAlignment="CENTER" wrapText="true" styleClass="result-details">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="nextButton" mnemonicParsing="false" text="NEXT" styleClass="result-next-button">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </Button>
+   </children>
+   <padding>
+      <Insets bottom="25.0" left="30.0" right="30.0" top="25.0" />
+   </padding>
+</VBox>

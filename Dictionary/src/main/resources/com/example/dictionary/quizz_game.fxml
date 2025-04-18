@@ -1,47 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.QuizController">
+<!-- Thêm fx:id="rootPane" và giữ lại stylesheets -->
+
+<AnchorPane fx:id="rootPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@quizz.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.QuizController">
     <children>
-        <Label alignment="TOP_LEFT" layoutX="28.0" layoutY="67.0" opacity="0.45" prefHeight="220.0" prefWidth="948.0" style="-fx-background-color: green; -fx-background-radius: 20; -fx-padding: 20;" wrapText="true">
+        <!-- Top Bar -->
+        <AnchorPane prefHeight="60.0" style="-fx-background-color: #e0e0e0;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <!-- Back Button -->
+                <Button fx:id="backButton" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleBackAction" prefHeight="40.0" prefWidth="40.0">
+                    <graphic>
+                        <ImageView fx:id="backbu" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="https://img.icons8.com/ios-glyphs/30/000000/undo.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <!-- Title Label -->
+                <Label fx:id="titleLabel" alignment="CENTER" layoutX="200.0" layoutY="10.0" prefHeight="40.0" prefWidth="400.0" text="BaChuTeEnglish" textAlignment="CENTER" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="10.0">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+
+                <!-- Next Button (Chính) -->
+                <Button fx:id="nextButton" layoutX="730.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleNextAction" prefHeight="30.0" prefWidth="60.0" text="next" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="15.0" />
+            </children>
+        </AnchorPane>
+
+        <!-- Question Area -->
+        <Region fx:id="questionAreaRegion" layoutX="30.0" layoutY="80.0" prefHeight="180.0" prefWidth="740.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="80.0" />
+        <Label fx:id="questionLabel" alignment="CENTER" layoutX="40.0" layoutY="90.0" prefHeight="160.0" prefWidth="720.0" text="Đây là khu vực hiển thị câu hỏi quiz..." textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="90.0">
             <font>
-                <Font name="System Bold" size="18.0" />
+                <Font size="16.0" />
             </font>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
         </Label>
-        <Label fx:id="quesLable" alignment="CENTER" layoutX="42.0" layoutY="75.0" prefHeight="202.0" prefWidth="914.0" wrapText="true">
-            <font>
-                <Font name="System Bold" size="22.0" />
-            </font>
-        </Label>
-        <Button fx:id="ansA" layoutX="131.0" layoutY="334.0" mnemonicParsing="false" onAction="#handle" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #d40000, #f88); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
-        <Button fx:id="ansD" layoutX="559.0" layoutY="523.0" mnemonicParsing="false" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #2ca44f, #b6f5c6); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
-        <Button fx:id="ansC" layoutX="139.0" layoutY="521.0" mnemonicParsing="false" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #0088ff, #aaddff); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
-        <Button fx:id="ansB" layoutX="542.0" layoutY="335.0" mnemonicParsing="false" prefHeight="121.0" prefWidth="337.0" style="-fx-background-color: linear-gradient(to right, #ffcc00, #ffffcc); -fx-text-fill: black; -fx-font-weight: bold; -fx-background-radius: 0; -fx-padding: 10 25; -fx-shape: &quot;M 0 20 L 20 0 L 120 0 L 140 20 L 120 40 L 20 40 Z&quot;;" text="Button" />
-        <Label alignment="CENTER" layoutX="408.0" layoutY="2.0" prefHeight="64.0" prefWidth="174.0" style="-fx-background-color: linear-gradient(to right, #2ca44f, #b6f5c6); -fx-background-radius: 25;" text="BaChuTeEnglish">
-            <font>
-                <Font name="System Bold" size="19.0" />
-            </font>
-        </Label>
-        <Button fx:id="exitQuizz" layoutX="31.0" layoutY="5.0" mnemonicParsing="false" onAction="#handle" prefHeight="39.0" prefWidth="26.0">
-            <graphic>
-                <ImageView fitHeight="36.0" fitWidth="42.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../../../picture/LogoButton/exit.png" />
-                    </image>
-                </ImageView>
-            </graphic>
-        </Button>
-        <Button layoutX="754.0" layoutY="17.0" mnemonicParsing="false" style="-fx-background-color: white;" />
-        <ImageView fitHeight="49.0" fitWidth="69.0" layoutX="748.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../../../picture/GameLogo/next.png" />
-            </image>
-        </ImageView>
+
+        <!-- Answer Buttons Grid -->
+        <GridPane fx:id="answersGrid" hgap="40.0" layoutX="50.0" layoutY="300.0" prefHeight="250.0" prefWidth="700.0" vgap="30.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="300.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <!-- Nút trả lời -->
+                <Button fx:id="answerButton1" mnemonicParsing="false" onAction="#handleAnswerAction" prefHeight="80.0" prefWidth="300.0" styleClass="answer-button" text="Button" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+                <Button fx:id="answerButton2" mnemonicParsing="false" onAction="#handleAnswerAction" prefHeight="80.0" prefWidth="300.0" styleClass="answer-button" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+                <Button fx:id="answerButton3" mnemonicParsing="false" onAction="#handleAnswerAction" prefHeight="80.0" prefWidth="300.0" styleClass="answer-button" text="Button" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+                <Button fx:id="answerButton4" mnemonicParsing="false" onAction="#handleAnswerAction" prefHeight="80.0" prefWidth="300.0" styleClass="answer-button" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+            </children>
+        </GridPane>
+        <!-- VBox thông báo sẽ được thêm vào đây bằng code -->
     </children>
 </AnchorPane>
