@@ -5,10 +5,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
+import javafx.event.ActionEvent;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -43,6 +49,36 @@ public class DictionaryController implements Initializable {
 
     @FXML
     private TextArea definitionArea;
+    @FXML
+    private Button backButton;
+    @FXML
+    void handleBack(ActionEvent event) {
+        try {
+            // 1. Lấy Stage hiện tại từ nút backButton (hoặc bất kỳ Node nào trên Scene)
+            Stage stage = (Stage) backButton.getScene().getWindow();
+
+            // 2. Tạo FXMLLoader để tải main.fxml
+            // !!! QUAN TRỌNG: Đảm bảo đường dẫn "/com/example/dictionary/main.fxml" là chính xác
+            // dựa trên vị trí của main.fxml trong thư mục resources.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/dictionary/main.fxml"));
+            Parent root = loader.load(); // Tải FXML
+
+            // 3. Tạo Scene mới
+            Scene scene = new Scene(root);
+
+            // 4. Đặt Scene mới cho Stage
+            stage.setScene(scene);
+            stage.setTitle("Main Application"); // Tùy chọn: Cập nhật tiêu đề cửa sổ
+            stage.show(); // Hiển thị lại stage với scene mới
+
+        } catch (IOException e) {
+            System.err.println("Lỗi khi tải main.fxml: " + e.getMessage());
+            e.printStackTrace();
+            // Cân nhắc hiển thị thông báo lỗi cho người dùng
+        }
+    }
+
+
 
     // Danh sách từ gốc (có thể đọc từ file hoặc database)
     private final ObservableList<String> masterWordList = FXCollections.observableArrayList();
@@ -237,4 +273,8 @@ public class DictionaryController implements Initializable {
     public void shutdown() {
         executorService.shutdown();
     }
+
+//
+//    public void handle(javafx.event.ActionEvent actionEvent) {
+//    }
 }

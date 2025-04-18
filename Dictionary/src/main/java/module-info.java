@@ -4,6 +4,7 @@ module com.example.dictionary {
     // Bạn có chắc cần module này không? Thường không cần cho JavaFX thuần túy.
     requires org.json;
     requires java.net.http;
+    requires java.desktop;
 
 
     // Thêm dòng này để sử dụng các lớp trong javafx.scene.media

@@ -9,33 +9,23 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.Tooltip?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.DictionaryController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.DictionaryController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="800.0" spacing="10.0" style="-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Tra từ:" HBox.hgrow="NEVER">
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="26.0" prefWidth="83.0" text="Quay lai" />
+            <Label fx:id="wordDisplayLabel" prefHeight="26.0" prefWidth="84.0" style="-fx-font-weight: bold;" text="Hiển thị" HBox.hgrow="NEVER">
                <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Label>
-            <TextField fx:id="searchField" onAction="#handleSearchAction" promptText="Nhập từ cần tra..." HBox.hgrow="ALWAYS" />
-            <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchAction" text="Thêm từ">
-               <tooltip>
-                  <Tooltip text="Thực hiện tra cứu từ" />
-               </tooltip>
-            </Button>
-            <Label fx:id="wordDisplayLabel" text="" HBox.hgrow="NEVER" style="-fx-font-weight: bold;">
-               <HBox.margin>
-                  <Insets left="20.0" right="10.0"/>
+                  <Insets left="20.0" right="10.0" />
                </HBox.margin>
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
+            <TextField fx:id="searchField" onAction="#handleSearchAction" prefHeight="26.0" prefWidth="781.0" promptText="Nhập từ cần tra..." HBox.hgrow="ALWAYS" />
+            <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="29.0" prefWidth="82.0" text="Tìm từ" />
             <!-- Nút âm thanh đã được xóa khỏi đây -->
          </children>
          <padding>
@@ -44,12 +34,12 @@
       </HBox>
    </top>
    <left>
-      <ListView fx:id="wordListView" prefHeight="560.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="wordListView" prefHeight="584.0" prefWidth="242.0" BorderPane.alignment="CENTER" />
    </left>
    <center>
-      <ScrollPane fitToWidth="true" fitToHeight="true" BorderPane.alignment="CENTER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="483.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <content>
-            <TextArea fx:id="definitionArea" editable="false" wrapText="true" prefHeight="558.0" prefWidth="598.0" promptText="Định nghĩa sẽ hiển thị ở đây..." />
+            <TextArea fx:id="definitionArea" editable="false" prefHeight="615.0" prefWidth="757.0" promptText="Định nghĩa sẽ hiển thị ở đây..." wrapText="true" />
          </content>
       </ScrollPane>
    </center>
