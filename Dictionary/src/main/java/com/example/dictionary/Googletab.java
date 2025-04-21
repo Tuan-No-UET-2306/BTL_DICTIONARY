@@ -1,11 +1,17 @@
 package com.example.dictionary; // Thay đổi thành package của bạn
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 import org.json.JSONObject; // Cần thư viện org.json
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -24,6 +30,34 @@ public class Googletab {
 
     @FXML
     private Button translateButton;
+    @FXML
+    private Button backButton;
+    @FXML
+    void handleBack(ActionEvent event) {
+        try {
+            // 1. Lấy Stage hiện tại từ nút backButton (hoặc bất kỳ Node nào trên Scene)
+            Stage stage = (Stage) backButton.getScene().getWindow();
+
+            // 2. Tạo FXMLLoader để tải main.fxml
+            // !!! QUAN TRỌNG: Đảm bảo đường dẫn "/com/example/dictionary/main.fxml" là chính xác
+            // dựa trên vị trí của main.fxml trong thư mục resources.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/dictionary/main.fxml"));
+            Parent root = loader.load(); // Tải FXML
+
+            // 3. Tạo Scene mới
+            Scene scene = new Scene(root);
+
+            // 4. Đặt Scene mới cho Stage
+            stage.setScene(scene);
+            stage.setTitle("Main Application"); // Tùy chọn: Cập nhật tiêu đề cửa sổ
+            stage.show(); // Hiển thị lại stage với scene mới
+
+        } catch (IOException e) {
+            System.err.println("Lỗi khi tải main.fxml: " + e.getMessage());
+            e.printStackTrace();
+            // Cân nhắc hiển thị thông báo lỗi cho người dùng
+        }
+    }
 
     // Khởi tạo HttpClient (nên dùng lại thay vì tạo mới mỗi lần)
     private final HttpClient httpClient = HttpClient.newBuilder()

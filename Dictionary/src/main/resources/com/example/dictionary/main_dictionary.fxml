@@ -7,6 +7,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
@@ -15,7 +17,14 @@
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="800.0" spacing="10.0" style="-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="26.0" prefWidth="83.0" text="Quay lai" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="26.0" prefWidth="83.0">
+               <graphic>
+                  <ImageView fitHeight="39.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" rotate="-180.0">
+                     <image>
+                        <Image url="@../../../picture/LogoButton/exit.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             <Label fx:id="wordDisplayLabel" prefHeight="26.0" prefWidth="84.0" style="-fx-font-weight: bold;" text="Hiển thị" HBox.hgrow="NEVER">
                <HBox.margin>
                   <Insets left="20.0" right="10.0" />
@@ -24,8 +33,15 @@
                   <Font size="16.0" />
                </font>
             </Label>
-            <TextField fx:id="searchField" onAction="#handleSearchAction" prefHeight="26.0" prefWidth="781.0" promptText="Nhập từ cần tra..." HBox.hgrow="ALWAYS" />
-            <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="29.0" prefWidth="82.0" text="Tìm từ" />
+            <TextField fx:id="searchField" onAction="#handleSearchAction" prefHeight="26.0" prefWidth="578.0" promptText="Nhập từ cần tra..." HBox.hgrow="ALWAYS" />
+            <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="36.0" prefWidth="0.0">
+               <graphic>
+                  <ImageView fitHeight="28.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/IconDic/Screenshot%202025-04-17%20165849.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             <!-- Nút âm thanh đã được xóa khỏi đây -->
          </children>
          <padding>
