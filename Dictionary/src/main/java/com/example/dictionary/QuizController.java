@@ -1,5 +1,6 @@
 package com.example.dictionary; // Đảm bảo đúng package
 
+import Function.ChangeStage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 // Bỏ import FXMLLoader, Parent, Scene, Stage nếu không dùng chức năng quay về main.fxml nữa
@@ -43,6 +44,7 @@ public class QuizController implements Initializable {
     @FXML private Button answerButton2;
     @FXML private Button answerButton3;
     @FXML private Button answerButton4;
+    @FXML private Button exitQuizz;
 
     // Trạng thái Quiz
     private int currentQuestionIndex = 0;
@@ -80,10 +82,15 @@ public class QuizController implements Initializable {
     private void initializeQuestions() {
         questions = new ArrayList<>();
         // --- Thêm các câu hỏi của bạn vào đây ---
-        questions.add(new Question("Từ nào đồng nghĩa với 'Happy'?", new String[]{"Sad", "Joyful", "Angry", "Tired"}, "Joyful"));
-        questions.add(new Question("Thủ đô của Việt Nam là gì?", new String[]{"Hà Nội", "Huế", "Đà Nẵng", "TP. Hồ Chí Minh"}, "Hà Nội"));
-        questions.add(new Question("What is 'Dog' in Vietnamese?", new String[]{"Mèo", "Chuột", "Chó", "Gà"}, "Chó"));
-        questions.add(new Question("Số nào lớn nhất?", new String[]{"100", "50", "200", "150"}, "200"));
+        questions.add(new Question("Which word is a synonym for 'big'?", new String[]{"Small", "Large", "Tiny", "Quiet"}, "Large"));
+        questions.add(new Question("What is the opposite of 'cold'?", new String[]{"Warm", "Cool", "Freezing", "Hot"}, "Hot"));
+        questions.add(new Question("What does 'ancient' mean?", new String[]{"New", "Modern", "Very old", "Fast"}, "Very old"));
+        questions.add(new Question("Find the synonym for 'fast'.", new String[]{"Slow", "Quick", "Easy", "Heavy"}, "Quick"));
+        questions.add(new Question("The antonym of 'sad' is...", new String[]{"Unhappy", "Angry", "Excited", "Happy"}, "Happy"));
+        questions.add(new Question("Which word means the same as 'beautiful'?", new String[]{"Ugly", "Pretty", "Simple", "Loud"}, "Pretty"));
+        questions.add(new Question("What is the opposite of 'up'?", new String[]{"Over", "Under", "Down", "Across"}, "Down"));
+        questions.add(new Question("A 'doctor' works in a...", new String[]{"School", "Restaurant", "Hospital", "Library"}, "Hospital"));
+        questions.add(new Question("Which word is a synonym for 'clever'?", new String[]{"Stupid", "Dull", "Smart", "Weak"}, "Smart"));
         // --- Thêm bao nhiêu câu hỏi tùy ý ---
         // Collections.shuffle(questions); // Tùy chọn: Xáo trộn câu hỏi
     }
@@ -283,5 +290,11 @@ public class QuizController implements Initializable {
         if(backButton != null) backButton.setDisable(false); // Giữ nút back bật để có thể xem lại câu cuối
 
         // TODO: Thêm logic hiển thị điểm số cuối cùng hoặc nút "Chơi lại"
+    }
+
+    public void handleExit(ActionEvent event) {
+        exitQuizz.setOnAction(e -> {
+            ChangeStage.changeStage(exitQuizz, "game_tab.fxml", getClass());
+        });
     }
 }

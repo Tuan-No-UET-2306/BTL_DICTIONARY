@@ -1,5 +1,7 @@
 package com.example.dictionary;
 
+import Function.ChangeStage;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -20,8 +22,8 @@ public class WordleController implements Initializable {
     private static final int MAX_GUESSES = 6;
     private static final int WORD_LENGTH = 5;
     private static final String[] WORD_LIST = {
-            "CHUOI", "QUYEN", "PHUOC", "MAY mắn", "TRUOT",
-            "APPLE", "TABLE", "CHAIR", "MOUSE", "HOUSE", "TRACE", "CRANE"
+            "APPLE", "TABLE", "CHAIR", "MOUSE", "HOUSE",
+            "WATER", "HAPPY", "START", "EARLY", "RIGHT"
     };
 
     private String secretWord;
@@ -46,6 +48,8 @@ public class WordleController implements Initializable {
 
     @FXML
     private Button restartButton;
+    @FXML
+    private Button backToGame;
 
     /**
      * Phương thức này được gọi tự động sau khi file FXML được load.
@@ -220,5 +224,10 @@ public class WordleController implements Initializable {
         guessInput.setDisable(true);
         guessButton.setDisable(true);
         restartButton.setVisible(true);
+    }
+    public void handleExit(ActionEvent event) {
+        backToGame.setOnAction(e -> {
+            ChangeStage.changeStage(backToGame, "game_tab.fxml", getClass());
+        });
     }
 }

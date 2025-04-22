@@ -1,0 +1,86 @@
+/* wordle.css */
+
+/* 
+   Áp dụng kiểu cho phần tử gốc (root element) của FXML. 
+   Trong trường hợp này, đó là VBox chính.
+*/
+.root {
+    -fx-background-image: url("../../../picture/GameLogo/bgWordle.jpg")  ;
+
+
+    /* --- CÁC LỰA CHỌN MÀU VÀNG KHÁC --- */
+
+    /* Sử dụng mã Hex (vàng chuẩn) */
+    /* -fx-background-color: #FFFF00; */
+
+    /* Sử dụng màu vàng nhạt hơn (LightYellow) */
+    /* -fx-background-color: #FFFFE0; */
+
+    /* Sử dụng màu vàng cam/đậm hơn một chút (Gold) */
+     /* -fx-background-color: #FFD700; */
+    /* Sử dụng màu vàng cam (Màu gần giống ảnh mẫu trước đó) */
+     /* -fx-background-color: #F8C040; */
+}
+
+/* --- TÙY CHỌN THÊM (Nếu bạn muốn style các phần tử khác) --- */
+
+/* Ví dụ: Style cho Label tiêu đề */
+.title-label {
+    -fx-text-fill: #333333; /* Màu chữ tối hơn để nổi bật trên nền vàng */
+    /* Giữ lại font từ FXML hoặc định nghĩa lại ở đây nếu muốn */
+    /* -fx-font-family: "Arial Bold"; */
+    /* -fx-font-size: 30px; */
+}
+
+/* Ví dụ: Style cho các nút bấm */
+.button {
+    -fx-background-color: #4CAF50; /* Màu xanh lá cây */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5; /* Bo góc nhẹ */
+    -fx-cursor: hand; /* Con trỏ hình bàn tay */
+}
+
+.button:hover {
+    -fx-background-color: #45a049; /* Màu xanh lá đậm hơn khi di chuột qua */
+}
+
+/* Ví dụ: Style cho ô nhập liệu */
+.text-field {
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+/* Ví dụ: Style cho các ô chữ trong GridPane (cần thêm styleClass nếu muốn cụ thể) */
+.wordle-grid .label {
+    -fx-background-color: white; /* Nền trắng cho các ô chữ */
+    -fx-alignment: center;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 50px; /* Kích thước ô */
+    -fx-pref-height: 50px;
+    -fx-border-color: #bdbdbd; /* Viền xám nhạt */
+    -fx-border-width: 1px;
+    -fx-text-fill: #333333; /* Màu chữ mặc định */
+}
+
+/* Bạn vẫn có thể định nghĩa các lớp .correct, .present, .absent ở đây */
+.wordle-grid .correct {
+    -fx-background-color: #6aaa64;
+    -fx-text-fill: white;
+    -fx-border-color: #6aaa64;
+}
+
+.wordle-grid .present {
+    -fx-background-color: #c9b458;
+    -fx-text-fill: white;
+    -fx-border-color: #c9b458;
+}
+
+.wordle-grid .absent {
+    -fx-background-color: #787c7e;
+    -fx-text-fill: white;
+    -fx-border-color: #787c7e;
+}

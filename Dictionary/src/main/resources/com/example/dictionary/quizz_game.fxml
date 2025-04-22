@@ -20,7 +20,7 @@
         <AnchorPane prefHeight="60.0" style="-fx-background-color: #e0e0e0;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <!-- Back Button -->
-                <Button fx:id="backButton" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleBackAction" prefHeight="40.0" prefWidth="40.0">
+                <Button fx:id="backButton" layoutX="667.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleBackAction" prefHeight="40.0" prefWidth="47.0">
                     <graphic>
                         <ImageView fx:id="backbu" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -36,9 +36,24 @@
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
-
-                <!-- Next Button (Chính) -->
-                <Button fx:id="nextButton" layoutX="730.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleNextAction" prefHeight="30.0" prefWidth="60.0" text="next" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="15.0" />
+            <Button fx:id="nextButton" layoutX="725.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleNextAction" prefHeight="40.0" prefWidth="40.0">
+               <graphic>
+                  <ImageView fx:id="backbu1" fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="https://img.icons8.com/ios-glyphs/30/000000/undo.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="exitQuizz" layoutX="11.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleExit" prefHeight="33.0" prefWidth="39.0">
+               <graphic>
+                  <ImageView fitHeight="21.0" fitWidth="29.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/LogoButton/exit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </AnchorPane>
 
