@@ -38,9 +38,8 @@
                <graphic>
                   <ImageView fitHeight="28.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../picture/IconDic/Screenshot%202025-04-17%20165849.png" />
-                     </image>
-                  </ImageView>
+                        <Image url="@../../../picture/LoGo/Screenshot%202025-04-17%20165849.png" />
+                     </image></ImageView>
                </graphic></Button>
             <!-- Nút âm thanh đã được xóa khỏi đây -->
          </children>
@@ -55,7 +54,10 @@
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="483.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <content>
-            <TextArea fx:id="definitionArea" editable="false" prefHeight="615.0" prefWidth="757.0" promptText="Định nghĩa sẽ hiển thị ở đây..." wrapText="true" />
+            <TextArea fx:id="definitionArea" editable="false" prefHeight="615.0" prefWidth="757.0" promptText="Định nghĩa sẽ hiển thị ở đây..." wrapText="true">
+               <font>
+                  <Font name="System Bold Italic" size="14.0" />
+               </font></TextArea>
          </content>
       </ScrollPane>
    </center>
