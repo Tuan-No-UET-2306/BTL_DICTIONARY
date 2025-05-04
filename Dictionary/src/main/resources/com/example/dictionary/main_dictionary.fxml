@@ -13,11 +13,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.DictionaryController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.maindictionary.DicController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="800.0" spacing="10.0" style="-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="26.0" prefWidth="83.0">
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="43.0" prefWidth="49.0">
                <graphic>
                   <ImageView fitHeight="39.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" rotate="-180.0">
                      <image>
