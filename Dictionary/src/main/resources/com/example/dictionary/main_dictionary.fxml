@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@maindictionary.css"  xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.maindictionary.DicController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@maindictionary.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.maindictionary.DicController"> <!-- Đảm bảo fx:controller đúng package -->
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="800.0" spacing="10.0" style="-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
          <children>
@@ -40,6 +40,28 @@
                      <image>
                         <Image url="@../../../picture/LoGo/Screenshot%202025-04-17%20165849.png" />
                      </image></ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets right="5.0" /> <!-- Khoảng cách -->
+               </HBox.margin>
+            </Button>
+            <!-- Nút Add (luôn hiển thị, kích thước cố định) -->
+            <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddWordAction" prefHeight="36.0" prefWidth="30.0">
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/IconDic/Screenshot%202025-04-17%20165823.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <!-- Nút Delete mới -->
+            <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#handleDeleteWordAction" prefHeight="36.0" prefWidth="36.0">
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../picture/IconDic/Screenshot%202025-04-17%20164403.png" />
+                     </image>
+                  </ImageView>
                </graphic></Button>
             <!-- Nút âm thanh đã được xóa khỏi đây -->
          </children>
