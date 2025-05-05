@@ -1,0 +1,231 @@
+/* === Vibrant Dictionary Stylesheet === */
+
+/* --- Global Settings --- */
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", system-ui, Arial, sans-serif;
+    -fx-font-size: 13px;
+
+    /* === BACKGROUND IMAGE SETTINGS START === */
+    /* 1. KIỂM TRA ĐƯỜNG DẪN NÀY CỰC KỲ CẨN THẬN */
+    /*    Đường dẫn phải đúng vị trí của ảnh SO VỚI FILE CSS này */
+    /*    Ví dụ: Nếu ảnh cùng thư mục: url("my_background.png") */
+    /*           Nếu ảnh trong thư mục con images: url("images/my_background.png") */
+    -fx-background-image: url("../../../picture/GameLogo/giaodiendictionary.jpg")  ; /* <<< SỬA ĐƯỜNG DẪN NẾU CẦN */
+
+    -fx-background-color: #eef2f7; /* Màu nền dự phòng */
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    /* === BACKGROUND IMAGE SETTINGS END === */
+
+    -fx-accent: #007bff;
+    -fx-focus-color: -fx-accent;
+    /* Quan trọng: Nền control nội bộ VẪN nên là màu đục để dễ đọc text */
+    -fx-control-inner-background: white;
+    -fx-text-base-color: #333;
+}
+
+/* Hoặc target trực tiếp BorderPane nếu đã thêm fx:id="mainPane" vào FXML */
+/* #mainPane { */
+/* Copy các thuộc tính -fx-background-* từ .root vào đây */
+/* } */
+
+
+/* --- Top Bar (HBox) --- */
+.border-pane > .hbox { /* Target HBox nằm trực tiếp trong BorderPane */
+    /* LÀM NỀN TRONG SUỐT HOẶC BÁN TRONG SUỐT */
+    /* Chọn 1 trong 2: */
+    -fx-background-color: transparent; /* Hoàn toàn trong suốt */
+    /* -fx-background-color: rgba(240, 240, 240, 0.85); */ /* 85% độ đục của màu #f0f0f0 */
+
+    /* Các style khác giữ nguyên */
+    -fx-border-color: transparent transparent #ced4da transparent;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+    -fx-padding: 6px 8px;
+}
+
+/* --- Back Button --- */
+#backButton {
+    /* ... (giữ nguyên) ... */
+    -fx-background-color: transparent;
+    -fx-background-radius: 50%;
+    -fx-padding: 6px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 5, 0.1, 0, 1);
+    -fx-transition: all 0.2s ease-in-out;
+}
+#backButton:hover {
+    -fx-background-color: rgba(0, 123, 255, 0.1);
+    -fx-transform: scale(1.05);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 123, 255, 0.3), 8, 0.2, 0, 2);
+}
+#backButton:pressed {
+    -fx-transform: scale(0.95);
+    -fx-effect: none;
+}
+
+
+/* --- Word Display Label --- */
+#wordDisplayLabel {
+    /* ... (giữ nguyên) ... */
+    -fx-text-fill: #0056b3;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+/* --- Search Field --- */
+#searchField {
+    /* Nền của TextField thường lấy từ -fx-control-inner-background (đã là white) */
+    /* Nên không cần làm trong suốt ở đây */
+    /* ... (giữ nguyên) ... */
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1.5px;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #adb5bd;
+    -fx-padding: 7px 15px;
+
+    -fx-transition: all 0.2s ease-in-out;
+}
+#searchField:focused {
+    -fx-border-color: -fx-accent;
+    -fx-background-color: white; /* Giữ trắng khi focus */
+
+}
+
+/* --- Search Button --- */
+#searchButton {
+    /* ... (giữ nguyên) ... */
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+    -fx-cursor: hand;
+    -fx-background-radius: 6px;
+    -fx-transition: background-color 0.2s ease;
+}
+#searchButton:hover {
+    -fx-background-color: rgba(0, 123, 255, 0.1);
+}
+#searchButton:pressed {
+    -fx-background-color: rgba(0, 123, 255, 0.2);
+}
+
+/* --- Word List View --- */
+#wordListView {
+    /* LÀM NỀN LISTVIEW TRONG SUỐT HOẶC BÁN TRONG SUỐT */
+    /* Chọn 1 trong 2: */
+    -fx-background-color: transparent; /* Hoàn toàn trong suốt */
+    /* -fx-background-color: rgba(248, 249, 250, 0.9); */ /* 90% độ đục của màu #f8f9fa */
+
+    /* Các style khác giữ nguyên */
+    -fx-border-color: #dee2e6 transparent #dee2e6 #dee2e6;
+    -fx-border-width: 1px;
+    -fx-padding: 0;
+}
+
+.list-view .list-cell {
+    /* Nền cell để trong suốt để thấy nền ListView (hoặc nền root nếu ListView trong suốt) */
+    -fx-background-color: transparent;
+    /* ... (giữ nguyên phần còn lại) ... */
+    -fx-padding: 10px 15px;
+    -fx-text-fill: #495057;
+    -fx-border-color: transparent transparent #e9ecef transparent;
+    -fx-border-width: 1px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-transition: all 0.15s ease-in-out;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: derive(-fx-accent, 85%);
+    -fx-text-fill: #0056b3;
+    -fx-border-color: transparent transparent derive(-fx-accent, 75%) transparent;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+
+}
+
+.list-view .list-cell:filled:selected:focused,
+.list-view:focused .list-cell:filled:selected {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
+}
+
+#wordListView:focused {
+    -fx-border-color: -fx-accent transparent -fx-accent -fx-accent;
+    -fx-border-width: 1px;
+}
+
+/* --- Definition Area (TextArea within ScrollPane) --- */
+#definitionArea {
+    /* Bản thân TextArea cũng nên trong suốt */
+    -fx-background-color: transparent;
+    /* ... (giữ nguyên phần còn lại) ... */
+    -fx-text-fill: #212529;
+    -fx-highlight-fill: derive(-fx-accent, 50%);
+    -fx-highlight-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-wrap-text: true;
+    /* Quản lý font ở đây thay vì FXML */
+    -fx-font-family: "Segoe UI", "Roboto", system-ui, Arial, sans-serif; /* Hoặc font khác */
+    -fx-font-size: 14px; /* Điều chỉnh cỡ chữ nếu cần */
+    /* -fx-font-style: italic; */ /* Bỏ comment nếu muốn nghiêng */
+    /* -fx-font-weight: bold; */ /* Bỏ comment nếu muốn đậm */
+}
+
+#definitionArea .content { /* Vùng nội dung text bên trong TextArea */
+    /* LÀM NỀN VÙNG TEXT TRONG SUỐT HOẶC BÁN TRONG SUỐT */
+    /* Chọn 1 trong 2: */
+    -fx-background-color: transparent; /* Hoàn toàn trong suốt */
+    /* -fx-background-color: rgba(255, 255, 255, 0.95); */ /* 95% độ đục của màu trắng */
+
+    /* Giữ padding */
+    -fx-padding: 15px 20px;
+}
+
+/* --- ScrollPane Styling --- */
+.scroll-pane {
+    /* ScrollPane thường mặc định trong suốt, nhưng cứ đặt rõ ràng */
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* --- Scroll Bar Styling --- */
+/* ... (giữ nguyên) ... */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-padding: 4px;
+}
+.scroll-bar:vertical { -fx-pref-width: 10; }
+.scroll-bar:horizontal { -fx-pref-height: 10; }
+.scroll-bar .thumb {
+    -fx-background-color: derive(-fx-accent, 70%);
+    -fx-background-radius: 8px;
+    -fx-background-insets: 1;
+}
+.scroll-bar .thumb:hover { -fx-background-color: derive(-fx-accent, 50%); }
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-pref-width: 8;
+    -fx-pref-height: 8;
+}
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}

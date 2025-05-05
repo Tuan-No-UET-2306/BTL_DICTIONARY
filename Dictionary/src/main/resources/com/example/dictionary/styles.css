@@ -1,7 +1,7 @@
 /* Apply styles to the root pane (StackPane) */
 #rootPane {
     /* Approximate background inspired by the image */
-    -fx-background-color: linear-gradient(to bottom, #fdf6e3, #d4eac4);
+    -fx-background-image: url("../../../picture/GameLogo/giaodien.jpg")  ;
 }
 
 /* Style the main VBox holding the form */
