@@ -15,114 +15,130 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional; // <-- Import cần thiết cho Confirmation Dialog
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.List;      // Import List
+import java.util.ArrayList; // Import ArrayList
 
 // Import các class từ cùng package maindictionary
-// import com.example.dictionary.maindictionary.DicDataLoader;
+// import com.example.dictionary.maindictionary.DicDataLoader; // Nếu cùng package thì không cần import tường minh
 // import com.example.dictionary.maindictionary.DicApiService;
 // import com.example.dictionary.maindictionary.DefinitionFormatter;
-
-// NOTE: Để phân tích JSON từ API một cách đáng tin cậy trong DefinitionFormatter,
-//       bạn NÊN thêm dependency vào project của mình và sử dụng một thư viện JSON chuyên nghiệp như Gson hoặc Jackson.
+// import com.example.dictionary.maindictionary.UserWordFileManager; // Static methods, không cần import instance
 
 
 public class DicController implements Initializable {
 
+    // --- Thành phần UI (View) ---
     @FXML
     private TextField searchField;
-
     @FXML
     private Button searchButton;
-
     @FXML
     private Label wordDisplayLabel;
-
     @FXML
     private ListView<String> wordListView;
-
     @FXML
     private TextArea definitionArea;
-
     @FXML
     private Button backButton;
-
     @FXML
     private Button addButton;
-
-    @FXML // <-- @FXML field cho nút Delete
+    @FXML
     private Button deleteButton;
 
-
-    // --- Biến lưu trữ dữ liệu ---
+    // --- Dữ liệu trong bộ nhớ (Model representation) ---
     private final ObservableList<String> masterWordList = FXCollections.observableArrayList();
     private FilteredList<String> filteredWordList;
+    private Map<String, String> localDictionaryRaw; // Từ và định nghĩa thô từ cả 2 file
 
-    private Map<String, String> localDictionaryRaw;
+    // --- Các đối tượng chức năng (Services/Managers) ---
+    private DicDataLoader dataLoader; // Để tải dữ liệu ban đầu
+    private DicApiService apiService; // Để gọi API online
+    private DefinitionFormatter definitionFormatter; // Để định dạng hiển thị
+    // UserWordFileManager không cần làm biến thành viên vì các phương thức của nó là static
 
-
-    // --- Các đối tượng chức năng (Services) ---
-    private DicDataLoader dataLoader;
-    private DicApiService apiService;
-    private DefinitionFormatter definitionFormatter;
-
-
-    // --- Service cho các tác vụ nền ---
+    // --- Service cho các tác vụ nền (để tránh đơ UI) ---
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    // --- Phương thức initialize ---
+    // --- Phương thức initialize (Thiết lập ban đầu) ---
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // 1. Khởi tạo các đối tượng chức năng
+        setupServices();        // 1. Khởi tạo các đối tượng chức năng
+        loadInitialData();      // 2. Tải dữ liệu từ điển ban đầu
+        setupListView();        // 3. Setup FilteredList và ListView
+        setupSearchField();     // 4. Thêm listener cho searchField và liên kết nút Search
+        setupButtonActions();   // 5. Gắn action cho các nút Add/Delete
+        setupInitialUIState();  // 6. Cấu hình trạng thái ban đầu UI
+
+        // 7. Ghi chú: ExecutorService cần được shutdown khi ứng dụng tắt.
+        //    Thường thì việc này được xử lý ở lớp Main Application.
+    }
+
+    // --- Phương thức Setup Helper ---
+
+    private void setupServices() {
         dataLoader = new DicDataLoader("/com/example/dictionary/dic_words.txt");
         apiService = new DicApiService();
         definitionFormatter = new DefinitionFormatter();
+    }
 
-        // 2. Tải dữ liệu từ điển ban đầu
-        loadDictionaryWords();
+    private void loadInitialData() {
+        try {
+            localDictionaryRaw = dataLoader.loadWordsAndRawDefinitions();
+            if (localDictionaryRaw != null) {
+                masterWordList.addAll(localDictionaryRaw.keySet());
+                FXCollections.sort(masterWordList);
+            } else {
+                localDictionaryRaw = new HashMap<>(); // Đảm bảo Map không null
+            }
+        } catch (RuntimeException e) {
+            System.err.println("Lỗi tải dữ liệu từ điển: " + e.getMessage());
+            showAlert("Lỗi tải dữ liệu", "Không thể tải dữ liệu từ điển ban đầu: " + e.getMessage());
+            localDictionaryRaw = new HashMap<>();
+            masterWordList.clear();
+        }
+    }
 
-        // 3. Setup FilteredList
+    private void setupListView() {
         filteredWordList = new FilteredList<>(masterWordList, p -> true);
         wordListView.setItems(filteredWordList);
 
-        // 4. Thêm listener cho searchField
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterWordList(newValue);
-        });
-
-        // 5. Thêm listener cho ListView
         wordListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                displayWordDefinition(newValue); // Gọi phương thức hiển thị chính
+                displayWordDefinition(newValue);
             } else {
                 clearDefinition();
             }
         });
-
-        // 6. Cấu hình ban đầu
-        definitionArea.setPromptText("Chọn một từ từ danh sách hoặc nhập từ vào ô 'Tra từ' và nhấn nút.");
-        definitionArea.setEditable(false);
-
-        // Cấu hình ban đầu cho nút Delete (vô hiệu hóa)
-        deleteButton.setDisable(true); // <-- Vô hiệu hóa nút Delete ban đầu
-
-        // 7. Liên kết Enter và nút Search
-        searchField.setOnAction(event -> handleSearchAction());
-        searchButton.setOnAction(event -> handleSearchAction());
-
-        // 8. Liên kết nút Add
-        addButton.setOnAction(event -> handleAddWordAction());
-
-        // 9. Liên kết nút Delete // <-- Thêm liên kết cho nút Delete
-        deleteButton.setOnAction(event -> handleDeleteWordAction());
     }
 
-    // --- Logic xử lý sự kiện ---
+    private void setupSearchField() {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterWordList(newValue);
+        });
+        searchField.setOnAction(event -> handleSearchAction()); // Liên kết Enter
+    }
+
+    private void setupButtonActions() {
+        searchButton.setOnAction(event -> handleSearchAction());
+        addButton.setOnAction(event -> handleAddWordAction());
+        deleteButton.setOnAction(event -> handleDeleteWordAction());
+        backButton.setOnAction(event -> handleBack(event)); // Gắn action cho nút back
+    }
+
+    private void setupInitialUIState() {
+        definitionArea.setPromptText("Chọn một từ từ danh sách hoặc nhập từ vào ô 'Tra từ' và nhấn nút.");
+        definitionArea.setEditable(false);
+        deleteButton.setDisable(true); // Ban đầu vô hiệu hóa nút xóa
+    }
+
+
+    // --- Logic xử lý sự kiện UI (@FXML Methods) ---
 
     @FXML
     void handleBack(ActionEvent event) {
@@ -161,181 +177,101 @@ public class DicController implements Initializable {
             return;
         }
 
-        // Kiểm tra lại lần nữa xem từ đã có trong danh sách cục bộ chưa
         if (localDictionaryRaw != null && localDictionaryRaw.containsKey(wordToAdd)) {
-            showAlert("Thông báo", "Từ '" + wordToAdd + "' đã có trong từ điển cục bộ.");
-            // deleteButton.setDisable(false); // Có thể enable nút Delete nếu hiển thị từ đã có
-            displayWordDefinition(wordToAdd); // Hiển thị định nghĩa cục bộ
+            showAlert("Thông báo", "Từ '" + wordToAdd + "' đã có trong từ điển.");
+            displayWordDefinition(wordToAdd); // Hiển thị định nghĩa nếu đã có
             return;
         }
 
-        // Vô hiệu hóa nút Add và Delete để tránh thao tác trong khi ghi file
-        addButton.setDisable(true);
-        deleteButton.setDisable(true); // <-- Vô hiệu hóa nút Delete khi thêm
+        // Vô hiệu hóa nút và báo trạng thái đang xử lý
+        setButtonState(true, true); // Disable Add và Delete
         definitionArea.appendText("\n-- Đang thêm '" + wordToAdd + "' vào từ điển cục bộ... --");
 
-
+        // Thực hiện tác vụ thêm trên luồng nền
         executorService.submit(() -> {
             try {
+                // 1. Chuẩn bị dữ liệu và gọi lớp quản lý file để ghi
                 String defaultRawDefinition = "**unclassified** No definition provided yet.\\\\";
-                dataLoader.appendWordToFile(wordToAdd, defaultRawDefinition);
+                String lineToAppend = wordToAdd + " " + defaultRawDefinition;
+                UserWordFileManager.appendLineToFile(lineToAppend); // Ghi vào file
 
-                Platform.runLater(() -> {
-                    // 1. Cập nhật Map cục bộ
-                    if (localDictionaryRaw != null) {
-                        localDictionaryRaw.put(wordToAdd, defaultRawDefinition);
-                    }
-
-                    // 2. Cập nhật ObservableList cho ListView và sắp xếp
-                    masterWordList.add(wordToAdd);
-                    FXCollections.sort(masterWordList);
-
-                    // FilteredList sẽ tự cập nhật
-
-                    // 3. Cập nhật TextArea để báo đã thêm thành công
-                    if (localDictionaryRaw != null && localDictionaryRaw.containsKey(wordToAdd)) { // Kiểm tra lại sau khi put
-                        definitionArea.appendText("\n-- Đã thêm từ '" + wordToAdd + "' vào từ điển cục bộ. --");
-                        // displayWordDefinition(wordToAdd); // Có thể gọi lại để hiển thị định nghĩa mặc định
-                    } else {
-                        definitionArea.appendText("\n-- Đã cố gắng thêm từ '" + wordToAdd + "', nhưng dữ liệu trong bộ nhớ chưa được cập nhật hoàn toàn. --");
-                    }
-
-                    System.out.println("Added word '" + wordToAdd + "' to local dictionary.");
-
-                    // Bật lại nút Add và Delete (Delete có thể sẽ bị disable ngay sau đó nếu TextArea được cập nhật)
-                    addButton.setDisable(false);
-                    // displayWordDefinition(wordToAdd); // <-- Gọi lại displayWordDefinition để xử lý trạng thái nút Delete
-                    // Hoặc đơn giản:
-                    if (localDictionaryRaw != null && localDictionaryRaw.containsKey(wordToAdd)) {
-                        deleteButton.setDisable(false); // Bật nút Delete nếu từ vừa thêm đã có trong map
-                    } else {
-                        deleteButton.setDisable(true); // Nếu không vì lý do nào đó
-                    }
-                });
+                // 2. Cập nhật UI và bộ nhớ trên luồng JavaFX Application Thread
+                Platform.runLater(() -> handleAddWordSuccess(wordToAdd, defaultRawDefinition));
 
             } catch (IOException e) {
-                System.err.println("Lỗi khi thêm từ vào file: " + e.getMessage());
-                Platform.runLater(() -> {
-                    showAlert("Lỗi", "Không thể thêm từ '" + wordToAdd + "' vào từ điển cục bộ: " + e.getMessage());
-                    addButton.setDisable(false); // Bật lại nút Add khi lỗi
-                    deleteButton.setDisable(false); // Bật lại nút Delete khi lỗi
-                });
+                // 3. Xử lý lỗi và cập nhật UI trên luồng JavaFX Application Thread
+                Platform.runLater(() -> handleAddWordError(wordToAdd, e.getMessage()));
             } catch (Exception e) {
+                // 4. Xử lý lỗi không xác định
                 System.err.println("Lỗi không xác định khi thêm từ: " + e.getMessage());
                 e.printStackTrace();
-                Platform.runLater(() -> {
-                    showAlert("Lỗi", "Có lỗi xảy ra khi thêm từ '" + wordToAdd + "': " + e.getMessage());
-                    addButton.setDisable(false); // Bật lại nút Add khi lỗi
-                    deleteButton.setDisable(false); // Bật lại nút Delete khi lỗi
-                });
+                Platform.runLater(() -> handleAddWordError(wordToAdd, "Lỗi không xác định: " + e.getMessage()));
             }
         });
     }
 
-    @FXML // <-- @FXML cho handler nút Delete
-    private void handleDeleteWordAction() { // Phương thức xử lý khi nhấn nút "Delete Word"
-        String wordToDelete = searchField.getText().trim(); // Lấy từ từ searchField (hoặc wordDisplayLabel)
+
+    @FXML
+    private void handleDeleteWordAction() {
+        String wordToDelete = wordDisplayLabel.getText().replace("@", "").trim();
 
         if (wordToDelete.isEmpty()) {
-            showAlert("Lỗi", "Không có từ nào để xóa.");
+            showAlert("Lỗi", "Không có từ nào đang hiển thị để xóa.");
+            setButtonState(false, true); // Vô hiệu hóa lại nút xóa nếu hiển thị không hợp lệ
             return;
         }
 
-        // Xác nhận từ người dùng trước khi xóa (quan trọng!)
-        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Xác nhận xóa");
-        confirmDialog.setHeaderText(null);
-        confirmDialog.setContentText("Bạn có chắc chắn muốn xóa từ '" + wordToDelete + "' khỏi từ điển cục bộ không?");
-
-        Optional<ButtonType> result = confirmDialog.showAndWait();
-        if (result.isPresent() && result.get() != ButtonType.OK) {
-            // Người dùng hủy bỏ thao tác
-            return;
-        }
-
-        // Kiểm tra xem từ này có thực sự trong dữ liệu cục bộ không
         if (localDictionaryRaw == null || !localDictionaryRaw.containsKey(wordToDelete)) {
             showAlert("Thông báo", "Từ '" + wordToDelete + "' không có trong từ điển cục bộ để xóa.");
-            deleteButton.setDisable(true); // Vô hiệu hóa nút nếu không có
+            setButtonState(false, true); // Vô hiệu hóa nút xóa
             return;
         }
 
-        // Vô hiệu hóa nút Add và Delete để tránh thao tác trong khi xóa file
-        addButton.setDisable(true);
-        deleteButton.setDisable(true); // <-- Vô hiệu hóa nút Delete khi xóa
+        // Yêu cầu xác nhận từ người dùng
+        Optional<ButtonType> result = showConfirmationDialog("Xác nhận xóa", "Bạn có chắc chắn muốn xóa từ '" + wordToDelete + "' khỏi từ điển cục bộ không?");
+        if (!result.isPresent() || result.get() != ButtonType.OK) {
+            return; // Người dùng hủy
+        }
+
+        // Vô hiệu hóa nút và báo trạng thái đang xử lý
+        setButtonState(true, true); // Disable Add và Delete
         definitionArea.appendText("\n-- Đang xóa '" + wordToDelete + "' khỏi từ điển cục bộ... --");
 
-        // Xóa từ khỏi file ở background thread
+        // Thực hiện tác vụ xóa trên luồng nền
         executorService.submit(() -> {
             try {
-                boolean deletedFromFile = dataLoader.deleteWordFromFile(wordToDelete); // Gọi DataLoader để xóa file
+                // 1. Gọi lớp quản lý file để xóa
+                boolean deletedFromFile = UserWordFileManager.deleteWordFromFile(wordToDelete);
 
-                Platform.runLater(() -> {
-                    if (deletedFromFile) {
-                        // 1. Cập nhật Map cục bộ
-                        if (localDictionaryRaw != null) {
-                            localDictionaryRaw.remove(wordToDelete);
-                        }
-
-                        // 2. Cập nhật ObservableList cho ListView
-                        masterWordList.remove(wordToDelete);
-                        // FilteredList sẽ tự cập nhật
-
-                        // 3. Xóa nội dung vùng định nghĩa cho từ vừa xóa
-                        // clearDefinition(); // Cách đơn giản là xóa sạch
-
-                        // Hoặc hiển thị thông báo đã xóa và từ đó
-                        wordDisplayLabel.setText("@" + wordToDelete); // Vẫn hiển thị từ đã xóa
-                        definitionArea.setText("Đã xóa từ '" + wordToDelete + "' khỏi từ điển cục bộ.");
-
-                        System.out.println("Deleted word '" + wordToDelete + "' from local dictionary.");
-
-                    } else {
-                        // Trường hợp không xóa được file (file không tồn tại hoặc từ không có trong file)
-                        // Logic này đã được kiểm tra ở trên và trong DataLoader, nên có thể không cần thiết ở đây
-                        definitionArea.appendText("\n-- Từ '" + wordToDelete + "' không được tìm thấy trong file cục bộ hoặc có lỗi khi xóa. --");
-                        System.err.println("Delete failed for word: " + wordToDelete);
-                    }
-
-                    // Bật lại nút Add và Delete
-                    addButton.setDisable(false);
-                    // deleteButton.setDisable(false); // Nút Delete sẽ bị disable ngay sau khi definitionArea được cập nhật (vì từ không còn trong map cục bộ)
-                    // Gọi displayWordDefinition() cho từ vừa xóa để cập nhật đúng trạng thái nút Disable
-                    displayWordDefinition(wordToDelete); // Sẽ dẫn đến không tìm thấy cục bộ -> disable nút Delete
-                });
+                // 2. Cập nhật UI và bộ nhớ trên luồng JavaFX Application Thread
+                Platform.runLater(() -> handleDeleteWordResult(wordToDelete, deletedFromFile));
 
             } catch (IOException e) {
-                System.err.println("Lỗi khi xóa từ khỏi file: " + e.getMessage());
-                Platform.runLater(() -> {
-                    showAlert("Lỗi", "Không thể xóa từ '" + wordToDelete + "' khỏi từ điển cục bộ: " + e.getMessage());
-                    addButton.setDisable(false); // Bật lại nút Add khi lỗi
-                    deleteButton.setDisable(false); // Bật lại nút Delete khi lỗi
-                });
-            } catch (Exception e) { // Bắt các lỗi khác có thể xảy ra
+                // 3. Xử lý lỗi và cập nhật UI trên luồng JavaFX Application Thread
+                Platform.runLater(() -> handleDeleteWordError(wordToDelete, e.getMessage()));
+            } catch (Exception e) {
+                // 4. Xử lý lỗi không xác định
                 System.err.println("Lỗi không xác định khi xóa từ: " + e.getMessage());
                 e.printStackTrace();
-                Platform.runLater(() -> {
-                    showAlert("Lỗi", "Có lỗi xảy ra khi xóa từ '" + wordToDelete + "': " + e.getMessage());
-                    addButton.setDisable(false); // Bật lại nút Add khi lỗi
-                    deleteButton.setDisable(false); // Bật lại nút Delete khi lỗi
-                });
+                Platform.runLater(() -> handleDeleteWordError(wordToDelete, "Lỗi không xác định: " + e.getMessage()));
             }
         });
     }
 
-
-    // --- Phương thức hiển thị định nghĩa chính (Controller điều phối) ---
+    // --- Logic hiển thị định nghĩa (phương thức điều phối) ---
     private void displayWordDefinition(String word) {
         if (word == null || word.trim().isEmpty()) {
-            clearDefinition(); // clearDefinition cũng sẽ disable nút Delete
+            clearDefinition();
             return;
         }
         String cleanedWord = word.trim();
 
+        // Cập nhật UI ban đầu
         wordDisplayLabel.setText("@" + cleanedWord);
         definitionArea.setText("Đang xử lý '" + cleanedWord + "'...");
+        setButtonState(false, false); // Ban đầu bật cả hai nút, sẽ điều chỉnh sau
 
-        // 1. Thử tra cứu định nghĩa cục bộ
+        // 1. Thử tra cứu định nghĩa cục bộ (từ cả file gốc và file thêm)
         String rawLocalDef = localDictionaryRaw != null ? localDictionaryRaw.get(cleanedWord) : null;
 
         if (rawLocalDef != null) {
@@ -343,111 +279,179 @@ public class DicController implements Initializable {
             String formattedDef = definitionFormatter.formatLocalDefinition(cleanedWord, rawLocalDef);
             Platform.runLater(() -> {
                 definitionArea.setText(formattedDef);
-                deleteButton.setDisable(false); // <-- Kích hoạt nút Delete khi tìm thấy cục bộ
+                setButtonState(false, true); // Chỉ bật nút Delete vì từ này có trong cục bộ
             });
         } else {
             // Nếu không tìm thấy cục bộ, thông báo, và chuẩn bị gọi API
             Platform.runLater(() -> {
                 definitionArea.setText("Không tìm thấy định nghĩa cục bộ cho '" + cleanedWord + "'. Đang tra cứu online...");
-                deleteButton.setDisable(true); // <-- Vô hiệu hóa nút Delete khi KHÔNG tìm thấy cục bộ
+                setButtonState(true, false); // Bật nút Add, vô hiệu hóa nút Delete
             });
-            // 2. Gọi API
+            // 2. Gọi API (trên luồng nền)
             fetchOnlineDefinition(cleanedWord);
         }
     }
 
 
-    // --- Các hàm helper ---
+    // --- Các phương thức Helper (Private Methods) ---
 
-    // Hàm tải dữ liệu từ điển từ file dic_words.txt trong resources và file thêm
-    private void loadDictionaryWords() {
-        try {
-            localDictionaryRaw = dataLoader.loadWordsAndRawDefinitions();
-            if (localDictionaryRaw != null) {
-                masterWordList.addAll(localDictionaryRaw.keySet());
-                FXCollections.sort(masterWordList);
-            } else {
-                localDictionaryRaw = new HashMap<>();
-            }
+    // Helper để bật/tắt các nút Add và Delete
+    private void setButtonState(boolean disableAdd, boolean disableDelete) {
+        addButton.setDisable(disableAdd);
+        deleteButton.setDisable(disableDelete);
+    }
 
-        } catch (RuntimeException e) {
-            System.err.println("Lỗi tải dữ liệu từ điển: " + e.getMessage());
-            showAlert("Lỗi tải dữ liệu", "Không thể tải dữ liệu từ điển ban đầu: " + e.getMessage());
-            localDictionaryRaw = new HashMap<>();
-            masterWordList.clear();
+    // Helper để xử lý kết quả thêm từ thành công trên luồng UI
+    private void handleAddWordSuccess(String word, String rawDefinition) {
+        if (localDictionaryRaw != null) {
+            // Cập nhật bộ nhớ
+            localDictionaryRaw.put(word, rawDefinition);
+            masterWordList.add(word); // Thêm vào list hiển thị
+            FXCollections.sort(masterWordList); // Sắp xếp lại list
         }
+
+        // Cập nhật UI
+        definitionArea.appendText("\n-- Đã thêm từ '" + word + "' vào từ điển cục bộ. --");
+        System.out.println("Added word '" + word + "' to local dictionary.");
+
+        // Khôi phục trạng thái nút (bật Add, bật Delete cho từ vừa thêm)
+        setButtonState(false, true); // Từ vừa thêm CÓ trong local, nên bật nút Delete
+        // Tự động hiển thị định nghĩa của từ vừa thêm
+        // displayWordDefinition(word); // Có thể gọi lại hàm này nếu muốn load lại definition sau khi thêm
+    }
+
+    // Helper để xử lý lỗi khi thêm từ trên luồng UI
+    private void handleAddWordError(String word, String errorMessage) {
+        System.err.println("Lỗi khi thêm từ '" + word + "': " + errorMessage);
+        showAlert("Lỗi", "Không thể thêm từ '" + word + "' vào từ điển cục bộ: " + errorMessage);
+
+        // Khôi phục trạng thái nút
+        setButtonState(false, localDictionaryRaw == null || !localDictionaryRaw.containsKey(word));
     }
 
 
-    // Hàm xử lý tra cứu API
+    // Helper để xử lý kết quả xóa từ trên luồng UI
+    private void handleDeleteWordResult(String word, boolean deletedFromFile) {
+        if (deletedFromFile) {
+            // Cập nhật bộ nhớ
+            if (localDictionaryRaw != null) {
+                localDictionaryRaw.remove(word);
+            }
+            masterWordList.remove(word); // Xóa khỏi list hiển thị
+
+            // Cập nhật UI
+            wordDisplayLabel.setText("@" + word); // Vẫn hiển thị từ đã xóa trên label
+            definitionArea.setText("Đã xóa từ '" + word + "' khỏi từ điển cục bộ.");
+            System.out.println("Updated in-memory dictionary after deletion for '" + word + "'.");
+            setButtonState(false, false); // Bật lại nút Add, vô hiệu hóa nút Delete
+            clearDefinition(); // Xóa nội dung hiển thị định nghĩa sau khi xóa
+        } else {
+            // Trường hợp không tìm thấy từ trong file user_added_words.txt để xóa (có thể từ gốc)
+            definitionArea.appendText("\n-- Từ '" + word + "' không được tìm thấy trong file có thể sửa đổi (user added file) để xóa. --");
+            System.err.println("Deletion attempt failed for word: " + word + " (Not found in user added file)");
+            // Nút Delete vẫn disabled từ lúc bắt đầu action, nút Add đã được bật lại.
+            setButtonState(false, true); // Bật nút Add, vô hiệu hóa nút Delete
+        }
+
+        // Khôi phục trạng thái nút (nút Add luôn được bật lại)
+        // Nút Delete đã được set đúng trạng thái bên trong logic.
+    }
+
+    // Helper để xử lý lỗi khi xóa từ trên luồng UI
+    private void handleDeleteWordError(String word, String errorMessage) {
+        System.err.println("Lỗi khi xóa từ '" + word + "': " + errorMessage);
+        showAlert("Lỗi", "Không thể xóa từ '" + word + "' khỏi từ điển cục bộ: " + errorMessage);
+
+        // Khôi phục trạng thái nút
+        setButtonState(false, localDictionaryRaw == null || !localDictionaryRaw.containsKey(word));
+    }
+
+
+    // Helper để xử lý tra cứu API trên luồng nền
     private void fetchOnlineDefinition(String word) {
         if (word == null || word.trim().isEmpty()) {
-            Platform.runLater(() -> {
-                if (localDictionaryRaw == null || !localDictionaryRaw.containsKey(word)) {
-                    definitionArea.setText("Từ cần tra cứu online không hợp lệ.");
-                }
-            });
+            // Logic kiểm tra đầu vào rỗng đã có ở displayWordDefinition, không cần lặp lại
             return;
         }
-        String finalWord = word.trim();
+        String finalWord = word.trim(); // Sử dụng biến final để dùng trong lambda expression
 
         executorService.submit(() -> {
-            String formattedApiDefinition;
-            boolean apiFound = false;
-
+            String rawJsonResponse = null;
             try {
-                String rawJsonResponse = apiService.fetchDefinition(finalWord);
+                // 1. Gọi API trên luồng nền
+                rawJsonResponse = apiService.fetchDefinition(finalWord);
 
+                // 2. Định dạng kết quả trên luồng nền (nếu formatter không thao tác với UI)
+                //    Lưu ý: Nếu DefinitionFormatter rất nặng, có thể cần tối ưu.
+                String formattedApiDefinition;
                 if (apiService.isNotFoundResponse(rawJsonResponse)) {
                     formattedApiDefinition = "Không tìm thấy định nghĩa online cho '" + finalWord + "'.";
-                    apiFound = false;
                 } else {
                     formattedApiDefinition = definitionFormatter.formatApiDefinition(rawJsonResponse);
-                    apiFound = true;
                 }
 
-                Platform.runLater(() -> {
-                    boolean hasLocalDef = localDictionaryRaw != null && localDictionaryRaw.containsKey(finalWord);
-                    boolean isFetchingMsg = definitionArea.getText().contains("Đang tra cứu online");
-
-                    if (hasLocalDef && !isFetchingMsg) {
-                        definitionArea.appendText("\n\n--- Định nghĩa online ---\n" + formattedApiDefinition);
-                    } else {
-                        definitionArea.setText(formattedApiDefinition);
-                    }
-                    // wordDisplayLabel đã được set ở displayWordDefinition
-                    // Trạng thái nút Delete đã được set ở displayWordDefinition
-                });
+                // 3. Cập nhật UI trên luồng JavaFX Application Thread
+                Platform.runLater(() -> handleOnlineFetchSuccess(finalWord, formattedApiDefinition));
 
             } catch (IOException e) {
-                System.err.println("Lỗi khi tra cứu online cho '" + finalWord + "': " + e.getMessage());
-                Platform.runLater(() -> {
-                    String errorMsg = "Lỗi mạng hoặc kết nối khi tra cứu online '" + finalWord + "': " + e.getMessage();
-                    boolean hasLocalDef = localDictionaryRaw != null && localDictionaryRaw.containsKey(finalWord);
-                    if (!hasLocalDef) {
-                        definitionArea.setText(errorMsg);
-                    } else {
-                        definitionArea.appendText("\n\n--- Lỗi khi tra cứu online ---\n" + errorMsg);
-                    }
-                });
+                // 4. Xử lý lỗi IO (mạng, kết nối) trên luồng UI
+                Platform.runLater(() -> handleOnlineFetchError(finalWord, e.getMessage()));
             } catch (Exception e) {
+                // 5. Xử lý lỗi khác (ví dụ: lỗi phân tích JSON nếu formatApiDefinition ném ngoại lệ) trên luồng UI
                 System.err.println("Lỗi xử lý phản hồi API cho '" + finalWord + "': " + e.getMessage());
                 e.printStackTrace();
-                Platform.runLater(() -> {
-                    String errorMsg = "Lỗi xử lý dữ liệu online cho '" + finalWord + "': " + e.getMessage();
-                    boolean hasLocalDef = localDictionaryRaw != null && localDictionaryRaw.containsKey(finalWord);
-                    if (!hasLocalDef) {
-                        definitionArea.setText(errorMsg);
-                    } else {
-                        definitionArea.appendText("\n\n--- Lỗi khi tra cứu online ---\n" + errorMsg);
-                    }
-                });
+                Platform.runLater(() -> handleOnlineFetchError(finalWord, "Lỗi xử lý dữ liệu online: " + e.getMessage()));
             }
         });
     }
 
+    // Helper để xử lý kết quả tra cứu online thành công (bao gồm cả không tìm thấy) trên luồng UI
+    private void handleOnlineFetchSuccess(String word, String formattedDefinition) {
+        boolean hasLocalDef = localDictionaryRaw != null && localDictionaryRaw.containsKey(word);
+        // Kiểm tra lại xem người dùng có đang xem định nghĩa của từ khác không
+        // (trường hợp người dùng gõ/chọn từ khác trong lúc đang fetch online)
+        if (!wordDisplayLabel.getText().replace("@", "").trim().equalsIgnoreCase(word)) {
+            System.out.println("Ignoring stale online result for '" + word + "' as current word displayed is different.");
+            return; // Bỏ qua kết quả cũ
+        }
 
-    // Hàm lọc danh sách từ
+        if (hasLocalDef) {
+            // Nếu đã có định nghĩa cục bộ, nối thêm định nghĩa online
+            definitionArea.appendText("\n\n--- Định nghĩa online ---\n" + formattedDefinition);
+        } else {
+            // Nếu không có định nghĩa cục bộ, hiển thị định nghĩa online (ghi đè thông báo "Đang tra cứu...")
+            definitionArea.setText(formattedDefinition);
+        }
+        // Trạng thái nút đã được set đúng ở displayWordDefinition
+        // (Add bật, Delete tắt khi không có local def)
+    }
+
+    // Helper để xử lý lỗi tra cứu online trên luồng UI
+    private void handleOnlineFetchError(String word, String errorMessage) {
+        System.err.println("Lỗi tra cứu online cho '" + word + "': " + errorMessage);
+
+        // Kiểm tra lại xem người dùng có đang xem định nghĩa của từ khác không
+        if (!wordDisplayLabel.getText().replace("@", "").trim().equalsIgnoreCase(word)) {
+            System.out.println("Ignoring stale online error for '" + word + "' as current word displayed is different.");
+            return; // Bỏ qua lỗi cũ
+        }
+
+        String errorMsg = "Lỗi mạng hoặc kết nối khi tra cứu online '" + word + "': " + errorMessage;
+        boolean hasLocalDef = localDictionaryRaw != null && localDictionaryRaw.containsKey(word);
+
+        if (!hasLocalDef) {
+            // Nếu không có định nghĩa cục bộ, hiển thị lỗi online (ghi đè thông báo "Đang tra cứu...")
+            definitionArea.setText(errorMsg);
+            setButtonState(false, false); // Bật Add, tắt Delete (đã set ở displayWordDefinition) -> Không cần set lại ở đây trừ khi logic phức tạp hơn
+        } else {
+            // Nếu đã có định nghĩa cục bộ, nối thêm thông báo lỗi online
+            definitionArea.appendText("\n\n--- Lỗi khi tra cứu online ---\n" + errorMsg);
+            // Trạng thái nút đã được set đúng ở displayWordDefinition (Add tắt, Delete bật)
+        }
+    }
+
+
+    // Helper để lọc danh sách từ trong ListView
     private void filterWordList(String filter) {
         if (filter == null || filter.isEmpty()) {
             filteredWordList.setPredicate(p -> true);
@@ -456,32 +460,36 @@ public class DicController implements Initializable {
             filteredWordList.setPredicate(word -> word.toLowerCase().startsWith(lowerCaseFilter));
         }
 
+        // Cuộn đến từ đầu tiên nếu có kết quả lọc
         if (!filteredWordList.isEmpty()) {
             Platform.runLater(() -> {
+                // Chỉ cuộn, không tự động hiển thị định nghĩa khi gõ
                 wordListView.scrollTo(filteredWordList.get(0));
-                // displayWordDefinition(filteredList.get(0)); // Tùy chọn: Hiển thị định nghĩa từ đầu tiên khi lọc
             });
         } else {
+            // Xóa hiển thị định nghĩa nếu danh sách lọc trống
             Platform.runLater(() -> {
                 wordListView.getSelectionModel().clearSelection();
-                clearDefinition(); // clearDefinition sẽ disable nút Delete
+                clearDefinition();
             });
         }
     }
 
-    // Hàm xóa nội dung vùng định nghĩa và label từ
+
+    // Helper để xóa nội dung vùng định nghĩa và label từ
     private void clearDefinition() {
         wordDisplayLabel.setText("");
         definitionArea.clear();
         definitionArea.setPromptText("Chọn một từ từ danh sách hoặc nhập từ vào ô 'Tra từ' và nhấn nút.");
-        deleteButton.setDisable(true); // <-- Vô hiệu hóa nút Delete khi xóa định nghĩa
+        deleteButton.setDisable(true); // Luôn vô hiệu hóa nút xóa khi không có từ nào hiển thị
+        addButton.setDisable(false); // Luôn bật nút thêm (có thể thêm bất kỳ từ nào)
     }
 
-    // Hàm hiển thị thông báo (thường dùng cho lỗi)
+
+    // Helper để hiển thị thông báo Alert
     private void showAlert(String title, String content) {
         Platform.runLater(() -> {
-            // Sử dụng Alert.AlertType.INFORMATION cho thông báo không phải lỗi nghiêm trọng
-            Alert.AlertType alertType = title.contains("Lỗi") ? Alert.AlertType.ERROR : Alert.AlertType.INFORMATION;
+            Alert.AlertType alertType = title != null && title.toLowerCase().contains("lỗi") ? Alert.AlertType.ERROR : Alert.AlertType.INFORMATION;
             Alert alert = new Alert(alertType);
             alert.setTitle(title);
             alert.setHeaderText(null);
@@ -490,11 +498,20 @@ public class DicController implements Initializable {
         });
     }
 
-    // Hàm để đóng ExecutorService khi ứng dụng tắt
+    // Helper để hiển thị hộp thoại xác nhận
+    private Optional<ButtonType> showConfirmationDialog(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        return alert.showAndWait();
+    }
+
+    // Hàm để đóng ExecutorService khi ứng dụng tắt (cần gọi từ lớp Main)
     public void shutdown() {
         if (executorService != null && !executorService.isShutdown()) {
-            System.out.println("Đóng ExecutorService...");
-            executorService.shutdown();
+            System.out.println("Đóng ExecutorService cho DicController...");
+            executorService.shutdownNow(); // Dùng shutdownNow để dừng ngay các tác vụ đang chạy
         }
     }
 }
