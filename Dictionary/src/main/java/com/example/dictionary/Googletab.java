@@ -1,206 +1,229 @@
-package com.example.dictionary; // Thay đổi thành package của bạn
+package com.example.dictionary;
 
+import Function.ChangeStage;
+import com.example.dictionary.googletab.TranslationService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
-import org.json.JSONObject; // Cần thư viện org.json
+
+import javafx.animation.KeyFrame;  // Import KeyFrame
+import javafx.animation.Timeline; // Import Timeline
+import javafx.util.Duration;      // Import Duration
+
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+// import java.util.concurrent.ExecutorService; // Không cần ExecutorService trong Controller nữa
+// import java.util.concurrent.Executors; // Không cần Executors trong Controller nữa
 
-public class Googletab {
 
+public class Googletab extends ChangeStage implements Initializable {
+
+    // --- Thành phần UI (View) ---
     @FXML
     private TextArea englishTextArea;
-
     @FXML
     private TextArea vietnameseTextArea;
-
     @FXML
-    private Button translateButton;
+    private Button translateButton; // Giữ nút này để dịch ngay lập tức nếu cần
     @FXML
     private Button backButton;
-    @FXML
-    void handleBack(ActionEvent event) {
-        try {
-            // 1. Lấy Stage hiện tại từ nút backButton (hoặc bất kỳ Node nào trên Scene)
-            Stage stage = (Stage) backButton.getScene().getWindow();
 
-            // 2. Tạo FXMLLoader để tải main.fxml
-            // !!! QUAN TRỌNG: Đảm bảo đường dẫn "/com/example/dictionary/main.fxml" là chính xác
-            // dựa trên vị trí của main.fxml trong thư mục resources.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/dictionary/main.fxml"));
-            Parent root = loader.load(); // Tải FXML
+    // --- Đối tượng chức năng (Service) mới ---
+    private TranslationService translationService;
 
-            // 3. Tạo Scene mới
-            Scene scene = new Scene(root);
+    // --- Debounce Timeline cho tính năng dịch live ---
+    private Timeline debounceTimeline;
+    private final Duration DEBOUNCE_DELAY = Duration.millis(400); // Độ trễ (ví dụ: 400ms) sau khi ngừng gõ
 
-            // 4. Đặt Scene mới cho Stage
-            stage.setScene(scene);
-            stage.setTitle("Main Application"); // Tùy chọn: Cập nhật tiêu đề cửa sổ
-            stage.show(); // Hiển thị lại stage với scene mới
-
-        } catch (IOException e) {
-            System.err.println("Lỗi khi tải main.fxml: " + e.getMessage());
-            e.printStackTrace();
-            // Cân nhắc hiển thị thông báo lỗi cho người dùng
-        }
+    // Constructor mặc định được sử dụng bởi FXMLLoader.
+    public Googletab() {
+        // Khởi tạo Service ở đây
+        this.translationService = new TranslationService();
     }
 
-    // Khởi tạo HttpClient (nên dùng lại thay vì tạo mới mỗi lần)
-    private final HttpClient httpClient = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_2)
-            .build();
+    // --- Phương thức initialize (Thiết lập ban đầu) ---
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setupInitialUIState();  // Cấu hình trạng thái UI ban đầu
+        setupButtonActions();   // Gắn action cho các nút
+        setupTextListener();    // Gắn listener cho text area
+        System.out.println("Translation Controller Initialized.");
+    }
+
+    // --- Phương thức Setup Helper ---
+
+    // setupServices() không còn cần thiết nếu khởi tạo trong constructor
+
+    private void setupInitialUIState() {
+        englishTextArea.setPromptText("Enter English text here...");
+        vietnameseTextArea.setPromptText("Translation will appear here...");
+        vietnameseTextArea.setEditable(false); // Vùng kết quả không nên chỉnh sửa
+        vietnameseTextArea.setStyle("-fx-text-fill: black;"); // Màu mặc định
+    }
+
+    private void setupButtonActions() {
+        // Nút dịch giờ sẽ ép buộc dịch ngay lập tức
+        translateButton.setOnAction(event -> handleTranslateButtonAction());
+        backButton.setOnAction(event -> handleBack(event));
+    }
+
+    // --- Thiết lập Listener cho TextArea để dịch live ---
+    private void setupTextListener() {
+        englishTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            handleTextInputChange(newValue);
+        });
+    }
+
+    // --- Logic xử lý sự kiện UI (@FXML Methods) ---
 
     @FXML
+    void handleBack(ActionEvent event) {
+        changeStage(backButton, "main.fxml", getClass());
+    }
+
+    // Xử lý khi nút Dịch được nhấn (buộc dịch ngay lập tức)
+    @FXML
     protected void handleTranslateButtonAction() {
-        String textToTranslate = englishTextArea.getText();
-        if (textToTranslate == null || textToTranslate.isBlank()) {
-            vietnameseTextArea.setText(""); // Xóa kết quả nếu input trống
+        // Dừng debounce timer nếu nó đang chạy, để tránh dịch 2 lần
+        if (debounceTimeline != null) {
+            debounceTimeline.stop();
+        }
+        // Bắt đầu dịch ngay lập tức
+        startTranslationProcess();
+    }
+
+    // --- Logic xử lý thay đổi văn bản (cho dịch live) ---
+    private void handleTextInputChange(String newText) {
+        // Dừng bộ đếm thời gian debounce hiện tại
+        if (debounceTimeline != null) {
+            debounceTimeline.stop();
+        }
+
+        // Nếu văn bản trống, xóa kết quả và không làm gì thêm
+        if (newText == null || newText.isBlank()) {
+            vietnameseTextArea.setText("");
+            vietnameseTextArea.setStyle("-fx-text-fill: black;"); // Đặt lại màu chữ bình thường
+            // Không cần bắt đầu dịch nếu input trống
             return;
         }
 
-        // Vô hiệu hóa nút và hiển thị trạng thái đang dịch
-        translateButton.setDisable(true);
-        vietnameseTextArea.setText("Translating...");
+        // Khởi tạo Timeline mới cho debounce
+        debounceTimeline = new Timeline(
+                new KeyFrame(DEBOUNCE_DELAY, event -> startTranslationProcess()) // Sau độ trễ, gọi startTranslationProcess
+        );
 
-        // Gọi API dịch bất đồng bộ
-        translateEnglishToVietnamese(textToTranslate)
+        // Bắt đầu bộ đếm thời gian
+        debounceTimeline.playFromStart();
+
+        // Cập nhật UI nhẹ nhàng khi người dùng bắt đầu gõ sau khi có kết quả cũ
+        // Không hiển thị "Translating..." ngay lập tức, chỉ hiển thị khi debounce xong
+        if (!vietnameseTextArea.getText().isEmpty() && !vietnameseTextArea.getText().equals("Translating...")) {
+            vietnameseTextArea.setText("..."); // Có thể hiển thị dấu ... hoặc xóa hẳn
+            vietnameseTextArea.setStyle("-fx-text-fill: gray;"); // Đổi màu chữ tạm thời
+        }
+    }
+
+
+    // --- Phương thức bắt đầu quá trình dịch (được gọi bởi debounce hoặc nút) ---
+    private void startTranslationProcess() {
+        String textToTranslate = englishTextArea.getText();
+
+        // Kiểm tra lại nếu text trống (trường hợp người dùng xóa hết text trong lúc debounce)
+        if (textToTranslate == null || textToTranslate.isBlank()) {
+            vietnameseTextArea.setText("");
+            vietnameseTextArea.setStyle("-fx-text-fill: black;");
+            return;
+        }
+
+        // 1. Cập nhật UI khi bắt đầu dịch thực sự (sau debounce)
+        updateUIForTranslationStart();
+
+        // 2. Gọi phương thức dịch từ Service (trả về CompletableFuture)
+        CompletableFuture<String> translationFuture = translationService.translate(textToTranslate, "en", "vi");
+
+        // 3. Xử lý kết quả trên luồng JavaFX Application Thread
+        translationFuture
                 .thenAcceptAsync(translatedText -> {
-                    // Cập nhật UI trên JavaFX Application Thread
-                    Platform.runLater(() -> {
-                        vietnameseTextArea.setText(translatedText);
-                        translateButton.setDisable(false); // Kích hoạt lại nút
-                    });
-                }, Platform::runLater) // Đảm bảo callback chạy trên UI thread nếu cần (an toàn hơn)
+                    // Cần kiểm tra xem text input có bị thay đổi trong lúc chờ dịch không
+                    // Nếu có, kết quả này đã cũ, không cập nhật UI
+                    if (englishTextArea.getText().equals(textToTranslate)) { // So sánh với text lúc bắt đầu yêu cầu này
+                        handleTranslationSuccess(translatedText);
+                    } else {
+                        System.out.println("Ignored old translation result for: " + textToTranslate);
+                        // Nếu kết quả cũ, UI sẽ được cập nhật bởi yêu cầu dịch mới nhất
+                        // Không cần làm gì ở đây, chỉ log để biết
+                    }
+                }, Platform::runLater)
+                // 4. Xử lý lỗi trên luồng JavaFX Application Thread
                 .exceptionally(error -> {
-                    // Xử lý lỗi (ví dụ: lỗi mạng, lỗi API, lỗi parsing)
-                    Platform.runLater(() -> {
-                        // In chi tiết lỗi ra console để debug
-                        System.err.println("Translation Error Occurred:");
-                        // In stack trace để biết nguồn gốc lỗi
-                        if (error.getCause() != null) {
-                            error.getCause().printStackTrace();
-                        } else {
-                            error.printStackTrace();
-                        }
-                        // Hiển thị thông báo lỗi thân thiện hơn cho người dùng
-                        String errorMessage = "Error: Could not translate.";
-                        if (error.getCause() instanceof IllegalArgumentException) {
-                            errorMessage += "\nDetails: Invalid character in URL (Check encoding).";
-                        } else if (error.getCause() != null) {
-                            errorMessage += "\nDetails: " + error.getCause().getMessage();
-                        } else {
-                            errorMessage += "\nDetails: " + error.getMessage();
-                        }
-
-                        vietnameseTextArea.setText(errorMessage);
-                        translateButton.setDisable(false); // Kích hoạt lại nút khi có lỗi
-                    });
-                    return null; // Bắt buộc phải return trong exceptionally
+                    // Cần kiểm tra xem text input có bị thay đổi trong lúc chờ dịch không
+                    // Nếu có, lỗi này có thể không liên quan đến input hiện tại
+                    if (englishTextArea.getText().equals(textToTranslate)) { // So sánh với text lúc bắt đầu yêu cầu này
+                        handleTranslationErrorAndRecovery(error);
+                    } else {
+                        System.out.println("Ignored old translation error for: " + textToTranslate);
+                        // Tương tự, chỉ log
+                    }
+                    return null; // Cần return null cho exceptionally
                 });
     }
 
-    /**
-     * Gửi yêu cầu dịch đến API MyMemory.
-     *
-     * @param englishText Văn bản tiếng Anh cần dịch.
-     * @return CompletableFuture chứa chuỗi tiếng Việt đã dịch, hoặc ném Exception nếu lỗi.
-     */
-    private CompletableFuture<String> translateEnglishToVietnamese(String englishText) {
-        try {
-            // Mã hóa văn bản để đưa vào URL query
-            String encodedText = URLEncoder.encode(englishText, StandardCharsets.UTF_8);
-            String langPair = "en|vi"; // Dịch từ Anh (en) sang Việt (vi)
 
-            // ----- SỬA ĐỔI QUAN TRỌNG Ở ĐÂY -----
-            // Mã hóa cả giá trị của langPair để dấu '|' thành '%7C'
-            String encodedLangPair = URLEncoder.encode(langPair, StandardCharsets.UTF_8);
-            // ------------------------------------
+    // --- Các phương thức Helper (Private Methods) ---
+    // Các phương thức này chịu trách nhiệm CẬP NHẬT UI
 
-            // Tạo chuỗi URL sử dụng các giá trị đã được mã hóa
-            String apiUrl = String.format("https://api.mymemory.translated.net/get?q=%s&langpair=%s",
-                    encodedText, encodedLangPair); // <-- Sử dụng encodedLangPair
-
-            // Tạo HTTP Request (GET)
-            // URI.create giờ sẽ nhận được URL hợp lệ
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl))
-                    .GET() // Phương thức GET là mặc định, nhưng ghi rõ ràng cũng tốt
-                    .header("Accept", "application/json") // Yêu cầu kết quả dạng JSON
-                    .build();
-
-            // Gửi request bất đồng bộ và xử lý response
-            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(response -> {
-                        if (response.statusCode() == 200) {
-                            // Phân tích JSON response để lấy nội dung dịch
-                            return parseTranslationResponse(response.body());
-                        } else {
-                            // Ném lỗi nếu response không thành công
-                            // Bao gồm cả body để dễ debug hơn
-                            throw new RuntimeException("API request failed with status code: " + response.statusCode() + "\nBody: " + response.body());
-                        }
-                    });
-
-        } catch (Exception e) {
-            // Bắt các lỗi khác có thể xảy ra khi tạo request (ví dụ: lỗi trong URI.create nếu apiUrl vẫn lỗi)
-            System.err.println("Error creating HTTP request: " + e.getMessage());
-            return CompletableFuture.failedFuture(e);
-        }
+    // Helper để cập nhật UI khi bắt đầu quá trình dịch thực sự (sau debounce)
+    private void updateUIForTranslationStart() {
+        // Không disable nút dịch nữa khi gõ
+        // translateButton.setDisable(true);
+        vietnameseTextArea.setText("Translating...");
+        vietnameseTextArea.setStyle("-fx-text-fill: gray;"); // Màu xám khi đang dịch
     }
 
-    /**
-     * Phân tích cú pháp JSON trả về từ API MyMemory.
-     *
-     * @param jsonResponse Chuỗi JSON từ API.
-     * @return Chuỗi tiếng Việt đã dịch.
-     */
-    private String parseTranslationResponse(String jsonResponse) {
-        try {
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            // Kiểm tra xem responseData và translatedText có tồn tại không
-            if (jsonObject.has("responseData") && jsonObject.getJSONObject("responseData").has("translatedText")) {
-                String translatedText = jsonObject.getJSONObject("responseData").getString("translatedText");
-                // (Optional) MyMemory đôi khi trả về HTML entities, bạn có thể muốn decode chúng
-                // Ví dụ sử dụng thư viện Apache Commons Text (cần thêm dependency)
-                // import org.apache.commons.text.StringEscapeUtils;
-                // return StringEscapeUtils.unescapeHtml4(translatedText);
-                return translatedText; // Trả về trực tiếp nếu không cần decode HTML
-            } else {
-                // Nếu cấu trúc JSON không như mong đợi
-                System.err.println("Unexpected JSON structure: 'responseData' or 'translatedText' missing.");
-                System.err.println("Response Body: " + jsonResponse);
-                throw new RuntimeException("Could not parse translation from response: Unexpected structure.");
-            }
-        } catch (Exception e) { // Bắt lỗi cụ thể hơn như JSONException nếu muốn
-            // Ném lỗi nếu cấu trúc JSON không đúng như mong đợi hoặc có lỗi parsing
-            System.err.println("JSON Parsing Error: " + e.getMessage());
-            System.err.println("Response Body: " + jsonResponse); // In ra body để debug
-            // Ném lại lỗi với thông tin rõ ràng hơn
-            throw new RuntimeException("Could not parse translation response. Check console for details.", e);
-        }
+    // Helper để xử lý kết quả dịch thành công và cập nhật UI trên luồng JavaFX
+    private Void handleTranslationSuccess(String translatedText) {
+        vietnameseTextArea.setText(translatedText);
+        // Không enable nút dịch nữa, nó luôn enabled
+        // translateButton.setDisable(false);
+        vietnameseTextArea.setStyle("-fx-text-fill: black;"); // Đặt lại màu chữ bình thường
+        return null; // Cần return null cho exceptionally
     }
 
-    // (Optional) Bạn có thể thêm một phương thức initialize nếu cần
-    @FXML
-    public void initialize() {
-        // Code khởi tạo nếu cần (ví dụ: đặt giá trị mặc định)
-        System.out.println("Translation Controller Initialized.");
-        // Có thể thêm gợi ý vào ô nhập liệu
-        englishTextArea.setPromptText("Enter English text here...");
-        vietnameseTextArea.setPromptText("Translation will appear here...");
+    // Helper để xử lý lỗi dịch, cập nhật UI và khôi phục trạng thái trên luồng JavaFX
+    private Void handleTranslationErrorAndRecovery(Throwable error) {
+        // Log chi tiết lỗi ra console để debug
+        System.err.println("Translation Error Occurred:");
+        Throwable cause = error.getCause() != null ? error.getCause() : error; // Lấy nguyên nhân gốc
+        cause.printStackTrace();
+
+        // Hiển thị thông báo lỗi thân thiện hơn cho người dùng
+        String errorMessage = "Error: Could not translate.\nDetails: ";
+        // Rút gọn thông báo lỗi hiển thị cho người dùng
+        if (cause instanceof IOException) {
+            errorMessage += "Network or connection issue.";
+        } else if (cause instanceof InterruptedException) {
+            errorMessage += "Translation interrupted.";
+        } else if (cause instanceof IllegalArgumentException) {
+            errorMessage += "Invalid input character or URL issue.";
+        } else if (cause.getMessage() != null && !cause.getMessage().trim().isEmpty()) {
+            String detail = cause.getMessage();
+            // Giới hạn độ dài chi tiết lỗi hiển thị trên UI
+            if (detail.length() > 150) detail = detail.substring(0, 150) + "...";
+            errorMessage += detail;
+        } else {
+            errorMessage += "Unknown error.";
+        }
+
+        vietnameseTextArea.setText(errorMessage);
+        // Không enable nút dịch nữa, nó luôn enabled
+        // translateButton.setDisable(false);
+        vietnameseTextArea.setStyle("-fx-text-fill: red;"); // Đổi màu chữ báo lỗi
+        return null; // Cần return null cho exceptionally
     }
 }

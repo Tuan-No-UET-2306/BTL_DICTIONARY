@@ -1,4 +1,5 @@
 package com.example.dictionary;
+import Function.ChangeStage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,9 +24,8 @@ public class DictionaryApplication extends Application {
         scene.getStylesheets().add(css);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Đăng nhập");
-      //  Image icon = new Image
-//("D:\\BaiTapLon\\Dictionary\\src\\main\\resources\\picture\\LoGo\\icon.png");
-       // primaryStage.getIcons().add(icon);
+        Image icon = new Image(Objects.requireNonNull(ChangeStage.class.getResource("/picture/LoGo/icon.png")).toExternalForm());
+        primaryStage.getIcons().add(icon);
         primaryStage.show();
     }
 

@@ -14,4 +14,6 @@ module com.example.dictionary {
     exports com.example.dictionary;
     exports com.example.dictionary.maindictionary;
     opens com.example.dictionary.maindictionary to javafx.fxml;
+    exports com.example.dictionary.googletab;
+    opens com.example.dictionary.googletab to javafx.fxml;
 }

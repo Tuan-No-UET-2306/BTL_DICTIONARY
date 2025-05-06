@@ -1,6 +1,7 @@
 package com.example.dictionary; // Khai báo package chứa lớp này. Đảm bảo khớp với cấu trúc dự án của bạn.
 
 // Import các lớp cần thiết từ thư viện JavaFX để làm việc với giao diện người dùng
+import Function.ChangeStage;
 import javafx.fxml.FXML;             // Dùng để liên kết các thành phần trong file FXML với code Java.
 import javafx.fxml.FXMLLoader;     // Dùng để tải file FXML (định nghĩa giao diện).
 import javafx.scene.Parent;         // Lớp cha cho tất cả các node (thành phần) trong cây giao diện.
@@ -162,38 +163,6 @@ public class LoginController {
      * Được gọi sau khi đăng nhập thành công.
      */
     private void switchToMainScene() {
-        try {
-            // 1. Lấy Stage (cửa sổ) hiện tại từ một thành phần bất kỳ trên Scene hiện tại (ví dụ: loginButton).
-            Stage currentStage = (Stage) loginButton.getScene().getWindow();
-
-            // 2. Tạo một FXMLLoader để tải file FXML của màn hình chính.
-            // Đảm bảo "main.fxml" nằm trong cùng thư mục resources hoặc có đường dẫn đúng.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
-
-            // 3. Tải FXML và lấy node gốc (thường là Pane, AnchorPane, VBox, ...) của màn hình chính.
-            Parent root = loader.load(); // Quá trình này có thể ném ra IOException.
-
-            // 4. Tạo một Scene mới chứa nội dung của màn hình chính.
-            Scene mainScene = new Scene(root);
-
-            // 5. (Tùy chọn) Thêm file CSS cho màn hình chính nếu cần.
-            // mainScene.getStylesheets().add(getClass().getResource("main-styles.css").toExternalForm());
-
-            // 6. Đặt Scene mới này làm Scene hiện tại của cửa sổ (Stage).
-            currentStage.setScene(mainScene);
-
-            // 7. (Tùy chọn) Cập nhật tiêu đề cửa sổ.
-            currentStage.setTitle("Từ điển Anh-Việt"); // Thay đổi tiêu đề cho phù hợp.
-
-            // 8. (Tùy chọn) Đặt lại kích thước cửa sổ hoặc căn giữa màn hình.
-            currentStage.centerOnScreen(); // Căn cửa sổ ra giữa màn hình.
-            currentStage.setResizable(true); // Cho phép người dùng thay đổi kích thước cửa sổ chính (nếu muốn).
-            // currentStage.sizeToScene(); // Điều chỉnh kích thước cửa sổ vừa với nội dung scene mới
-
-        } catch (IOException e) {
-            // Xử lý lỗi nếu không thể tải được file main.fxml.
-            e.printStackTrace(); // In chi tiết lỗi ra console để debug.
-            showMessage("Lỗi nghiêm trọng: Không thể tải màn hình chính.", true); // Hiển thị lỗi trên màn hình đăng nhập.
-        }
+        ChangeStage.changeStage(loginButton, "main.fxml", getClass());
     }
 }

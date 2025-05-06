@@ -1,17 +1,18 @@
-package com.example.dictionary.maindictionary;
+package com.example.dictionary;
 
+import Function.ChangeStage;
+import com.example.dictionary.maindictionary.DefinitionFormatter;
+import com.example.dictionary.maindictionary.DicApiService;
+import com.example.dictionary.maindictionary.DicDataLoader;
+import com.example.dictionary.maindictionary.UserWordFileManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,8 +22,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.List;      // Import List
-import java.util.ArrayList; // Import ArrayList
+
 
 // Import các class từ cùng package maindictionary
 // import com.example.dictionary.maindictionary.DicDataLoader; // Nếu cùng package thì không cần import tường minh
@@ -31,7 +31,7 @@ import java.util.ArrayList; // Import ArrayList
 // import com.example.dictionary.maindictionary.UserWordFileManager; // Static methods, không cần import instance
 
 
-public class DicController implements Initializable {
+public class DicController extends ChangeStage implements Initializable {
 
     // --- Thành phần UI (View) ---
     @FXML
@@ -142,19 +142,7 @@ public class DicController implements Initializable {
 
     @FXML
     void handleBack(ActionEvent event) {
-        try {
-            Stage stage = (Stage) backButton.getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/dictionary/main.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Main Application");
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("Lỗi khi tải main.fxml: " + e.getMessage());
-            e.printStackTrace();
-            showAlert("Lỗi", "Không thể quay lại màn hình chính.");
-        }
+        changeStage(backButton, "main.fxml", getClass());
     }
 
     @FXML
