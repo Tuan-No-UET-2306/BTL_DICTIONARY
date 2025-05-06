@@ -11,7 +11,7 @@
     /* Đường dẫn này phải đúng so với vị trí của file googletab.css */
     /* Ví dụ: Nếu css ở com/example/dictionary và ảnh ở resources/picture/GameLogo/bgWordle.jpg */
     /* thì đường dẫn có thể cần là "../../resources/picture/GameLogo/bgWordle.jpg" */
-    -fx-background-image: url("../../../picture/GameLogo/googletab.png"); /* <<< ĐẢM BẢO ĐƯỜNG DẪN NÀY ĐÚNG */
+    -fx-background-image: url("../../../picture/GameLogo/img_3.png"); /* <<< ĐẢM BẢO ĐƯỜNG DẪN NÀY ĐÚNG */
 
     /* Màu nền dự phòng (sẽ hiển thị nếu ảnh không tải được) */
     -fx-background-color: #e8f0fe; /* Màu xanh dương nhạt làm fallback */

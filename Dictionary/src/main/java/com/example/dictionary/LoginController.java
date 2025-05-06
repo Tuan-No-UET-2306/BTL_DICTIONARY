@@ -40,34 +40,7 @@ public class LoginController {
      * Phương thức `initialize` được JavaFX tự động gọi *sau khi* file FXML đã được tải
      * và tất cả các thành phần @FXML đã được liên kết.
      * Dùng để thực hiện các cài đặt ban đầu cho giao diện.
-     */
-    @FXML
-    public void initialize() {
-        // --- Tải và hiển thị logo (Tùy chọn) ---
-        try {
-            // Cố gắng lấy luồng dữ liệu (InputStream) của file ảnh "logo.png".
-            // getClass().getResourceAsStream() tìm file trong cùng thư mục resource với file .class này.
-            // **QUAN TRỌNG:** Đảm bảo file "logo.png" nằm trong thư mục resources của dự án và được cấu hình đúng trong môi trường build (Maven/Gradle).
-            InputStream logoStream = getClass().getResourceAsStream("mainBackGround.png"); // Thay "logo.png" bằng tên file logo thực tế của bạn.
 
-            if (logoStream != null) { // Nếu tìm thấy file logo
-                logoImageView.setImage(new Image(logoStream)); // Tạo đối tượng Image từ luồng dữ liệu và đặt nó cho ImageView.
-            } else { // Nếu không tìm thấy file logo trong resources
-                System.err.println("Lỗi: Không tìm thấy file logo 'logo.png' trong resources.");
-                // Ẩn ImageView đi nếu không có logo
-                logoImageView.setVisible(false); // Làm cho nó không hiển thị.
-                logoImageView.setManaged(false); // Không dành không gian layout cho nó nữa.
-            }
-        } catch (Exception e) { // Bắt các lỗi có thể xảy ra trong quá trình tải ảnh
-            System.err.println("Lỗi khi tải logo: " + e.getMessage());
-            // Cũng ẩn ImageView nếu có lỗi xảy ra
-            logoImageView.setVisible(false);
-            logoImageView.setManaged(false);
-        }
-
-        // --- Xóa nội dung ban đầu của nhãn thông báo ---
-        messageLabel.setText(""); // Đảm bảo nhãn thông báo trống khi màn hình mới hiển thị.
-    }
 
 
     /**

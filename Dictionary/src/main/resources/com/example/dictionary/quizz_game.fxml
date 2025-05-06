@@ -45,7 +45,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="exitQuizz" layoutX="11.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleExit" prefHeight="33.0" prefWidth="39.0">
+            <Button fx:id="exitQuizz" layoutX="11.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleExit" prefHeight="33.0" prefWidth="39.0" style="-fx-background-color: linear-gradient(to bottom, #b3e8ae, #88d681);">
                <graphic>
                   <ImageView fitHeight="21.0" fitWidth="29.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
                      <image>

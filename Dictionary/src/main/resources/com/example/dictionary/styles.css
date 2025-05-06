@@ -76,7 +76,7 @@
 /* Style the message label */
 .message-label {
     -fx-font-size: 12px;
-    -fx-text-fill: red; /* Default error color */
+    -fx-text-fill: yellow; /* Default error color */
     -fx-alignment: center;
     -fx-min-height: 20px; /* Reserve space for messages */
 }

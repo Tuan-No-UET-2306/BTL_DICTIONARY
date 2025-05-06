@@ -1,5 +1,5 @@
 .root {
-    -fx-background-color: #f4f4f4;
+   -fx-background-image: url("../../../picture/GameLogo/img_2.png")  ;
 }
 
 /* --- Top Bar --- */
@@ -7,7 +7,7 @@
 
 /* --- Back Button --- */
 #backButton {
-    -fx-background-color: #ffffff; /* Nền trắng */
+     -fx-background-color: linear-gradient(to bottom, #b3e8ae, #88d681);
     -fx-background-radius: 5;
     -fx-border-color: #cccccc;    /* Viền xám nhạt */
     -fx-border-radius: 5;
@@ -29,7 +29,7 @@
 
 /* --- Next Button (Trong Top Bar) --- */
 #nextButton {
-    -fx-background-color: white;
+       -fx-background-color: linear-gradient(to bottom, #b3e8ae, #88d681);
     -fx-text-fill: black;
     -fx-border-color: #cccccc;
     -fx-border-radius: 3;
