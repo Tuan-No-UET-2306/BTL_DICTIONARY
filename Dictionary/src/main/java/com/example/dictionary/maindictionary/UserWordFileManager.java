@@ -1,5 +1,4 @@
 package com.example.dictionary.maindictionary;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,9 +11,7 @@ import java.io.OutputStreamWriter; // <-- Import cần thiết
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
 public class UserWordFileManager {
-
     // --- Đường dẫn cố định đến file lưu trữ từ người dùng thêm ---
     private static final String USER_ADDED_FILE_PATH = System.getProperty("user.home") + File.separator + "my_dictionary_added_words.txt";
     private static final File USER_ADDED_FILE = new File(USER_ADDED_FILE_PATH); // Tạo đối tượng File tĩnh
@@ -156,7 +153,6 @@ public class UserWordFileManager {
         return lines;
     }
 
-
     /**
      * Ghi thêm một dòng mới vào cuối file lưu trữ từ người dùng thêm.
      *
@@ -211,5 +207,4 @@ public class UserWordFileManager {
             throw new IOException("Failed to overwrite user added file: " + e.getMessage(), e);
         }
     }
-
 }
