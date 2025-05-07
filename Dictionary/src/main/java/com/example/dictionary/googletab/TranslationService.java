@@ -54,7 +54,7 @@ public class TranslationService {
 
             // Tạo HTTP Request (GET)
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl)) // URI.create có thể ném IllegalArgumentException
+                    .uri(URI.create(apiUrl))
                     .GET()
                     .header("Accept", "application/json") // Yêu cầu kết quả dạng JSON
                     .timeout(java.time.Duration.ofSeconds(10)) // Thêm timeout cho request
@@ -67,7 +67,7 @@ public class TranslationService {
                         // Kiểm tra mã trạng thái HTTP
                         if (response.statusCode() == 200) {
                             // Phân tích JSON response
-                            return parseTranslationResponse(response.body()); // parseTranslationResponse có thể ném ngoại lệ
+                            return parseTranslationResponse(response.body());
                         } else {
                             // Ném lỗi nếu response không thành công (ví dụ: 404, 500...)
                             // Bao gồm cả body để dễ debug hơn
@@ -108,10 +108,6 @@ public class TranslationService {
             // Kiểm tra xem responseData và translatedText có tồn tại không
             if (jsonObject.has("responseData") && jsonObject.getJSONObject("responseData").has("translatedText")) {
                 String translatedText = jsonObject.getJSONObject("responseData").getString("translatedText");
-                // (Optional) MyMemory đôi khi trả về HTML entities, bạn có thể muốn decode chúng
-                // Sử dụng thư viện bên ngoài như Apache Commons Text hoặc Spring Framework's HtmlUtils
-                // Ví dụ với Apache Commons Text (cần thêm dependency commons-text)
-                // return org.apache.commons.text.StringEscapeUtils.unescapeHtml4(translatedText);
                 return translatedText; // Trả về trực tiếp nếu không cần decode HTML
             } else {
                 // Nếu cấu trúc JSON không như mong đợi

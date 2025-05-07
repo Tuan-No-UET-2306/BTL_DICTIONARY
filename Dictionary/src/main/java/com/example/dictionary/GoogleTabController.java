@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 // import java.util.concurrent.Executors; // Không cần Executors trong Controller nữa
 
 
-public class Googletab extends ChangeStage implements Initializable {
+public class GoogleTabController extends ChangeStage implements Initializable {
 
     // --- Thành phần UI (View) ---
     @FXML
@@ -39,10 +39,10 @@ public class Googletab extends ChangeStage implements Initializable {
 
     // --- Debounce Timeline cho tính năng dịch live ---
     private Timeline debounceTimeline;
-    private final Duration DEBOUNCE_DELAY = Duration.millis(400); // Độ trễ (ví dụ: 400ms) sau khi ngừng gõ
+    private final Duration DEBOUNCE_DELAY = Duration.millis(100);
 
     // Constructor mặc định được sử dụng bởi FXMLLoader.
-    public Googletab() {
+    public GoogleTabController() {
         // Khởi tạo Service ở đây
         this.translationService = new TranslationService();
     }
@@ -56,9 +56,6 @@ public class Googletab extends ChangeStage implements Initializable {
         System.out.println("Translation Controller Initialized.");
     }
 
-    // --- Phương thức Setup Helper ---
-
-    // setupServices() không còn cần thiết nếu khởi tạo trong constructor
 
     private void setupInitialUIState() {
         englishTextArea.setPromptText("Enter English text here...");
@@ -109,7 +106,6 @@ public class Googletab extends ChangeStage implements Initializable {
         if (newText == null || newText.isBlank()) {
             vietnameseTextArea.setText("");
             vietnameseTextArea.setStyle("-fx-text-fill: black;"); // Đặt lại màu chữ bình thường
-            // Không cần bắt đầu dịch nếu input trống
             return;
         }
 
@@ -120,13 +116,6 @@ public class Googletab extends ChangeStage implements Initializable {
 
         // Bắt đầu bộ đếm thời gian
         debounceTimeline.playFromStart();
-
-        // Cập nhật UI nhẹ nhàng khi người dùng bắt đầu gõ sau khi có kết quả cũ
-        // Không hiển thị "Translating..." ngay lập tức, chỉ hiển thị khi debounce xong
-        if (!vietnameseTextArea.getText().isEmpty() && !vietnameseTextArea.getText().equals("Translating...")) {
-            vietnameseTextArea.setText("..."); // Có thể hiển thị dấu ... hoặc xóa hẳn
-            vietnameseTextArea.setStyle("-fx-text-fill: gray;"); // Đổi màu chữ tạm thời
-        }
     }
 
 
@@ -140,9 +129,6 @@ public class Googletab extends ChangeStage implements Initializable {
             vietnameseTextArea.setStyle("-fx-text-fill: black;");
             return;
         }
-
-        // 1. Cập nhật UI khi bắt đầu dịch thực sự (sau debounce)
-        updateUIForTranslationStart();
 
         // 2. Gọi phương thức dịch từ Service (trả về CompletableFuture)
         CompletableFuture<String> translationFuture = translationService.translate(textToTranslate, "en", "vi");
@@ -170,20 +156,8 @@ public class Googletab extends ChangeStage implements Initializable {
                         System.out.println("Ignored old translation error for: " + textToTranslate);
                         // Tương tự, chỉ log
                     }
-                    return null; // Cần return null cho exceptionally
+                    return null;
                 });
-    }
-
-
-    // --- Các phương thức Helper (Private Methods) ---
-    // Các phương thức này chịu trách nhiệm CẬP NHẬT UI
-
-    // Helper để cập nhật UI khi bắt đầu quá trình dịch thực sự (sau debounce)
-    private void updateUIForTranslationStart() {
-        // Không disable nút dịch nữa khi gõ
-        // translateButton.setDisable(true);
-        vietnameseTextArea.setText("Translating...");
-        vietnameseTextArea.setStyle("-fx-text-fill: gray;"); // Màu xám khi đang dịch
     }
 
     // Helper để xử lý kết quả dịch thành công và cập nhật UI trên luồng JavaFX
