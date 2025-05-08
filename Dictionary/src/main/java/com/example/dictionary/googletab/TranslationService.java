@@ -22,6 +22,7 @@ public class TranslationService {
     private final HttpClient httpClient;
     private static final String API_BASE_URL = "https://api.mymemory.translated.net/get?q=%s&langpair=%s";
 
+
     // Constructor
     public TranslationService() {
         this.httpClient = HttpClient.newBuilder()
@@ -48,6 +49,7 @@ public class TranslationService {
             String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
             String langPair = sourceLang + "|" + targetLang;
             String encodedLangPair = URLEncoder.encode(langPair, StandardCharsets.UTF_8);
+
 
             // Tạo chuỗi URL
             String apiUrl = String.format(API_BASE_URL, encodedText, encodedLangPair);
@@ -108,7 +110,7 @@ public class TranslationService {
             // Kiểm tra xem responseData và translatedText có tồn tại không
             if (jsonObject.has("responseData") && jsonObject.getJSONObject("responseData").has("translatedText")) {
                 String translatedText = jsonObject.getJSONObject("responseData").getString("translatedText");
-                return translatedText; // Trả về trực tiếp nếu không cần decode HTML
+                return translatedText;
             } else {
                 // Nếu cấu trúc JSON không như mong đợi
                 System.err.println("Unexpected JSON structure or missing data in response.");

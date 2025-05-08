@@ -27,4 +27,5 @@ public class GameTabController implements EventHandler<ActionEvent> {
             ChangeStage.changeStage(quizzButton,"quizz_game.fxml",getClass());
         });
     }
+
 }

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER_LEFT" prefHeight="541.0" prefWidth="750.0" spacing="10.0" stylesheets="@googletab.css"  xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.GoogleTabController">
+<VBox alignment="CENTER_LEFT" prefHeight="700.0" prefWidth="1000.0" spacing="15.0" stylesheets="@googletab.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dictionary.GoogleTabController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -27,10 +27,10 @@
       <font>
          <Font name="System Bold Italic" size="14.0" />
       </font></Label>
-    <TextArea fx:id="englishTextArea" prefHeight="310.0" prefWidth="710.0" promptText="Enter English text here..." wrapText="true" />
+    <TextArea fx:id="englishTextArea" prefHeight="310.0" prefWidth="960.0" promptText="Enter English text here..." wrapText="true" />
    <Button fx:id="translateButton" mnemonicParsing="false" onAction="#handleTranslateButtonAction">
       <graphic>
-         <ImageView fitHeight="43.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
+         <ImageView fitHeight="53.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../../../picture/LogoButton/img.png" />
             </image>
