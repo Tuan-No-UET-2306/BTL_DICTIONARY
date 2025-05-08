@@ -8,113 +8,84 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
-import java.util.Set; // Import Set
-import java.util.HashSet; // Import HashSet
-
+import java.util.Set;
+import java.util.HashSet;
+// tải dữ liệu từ các nguồn cục bộ lên ứng dụng
 public class DicDataLoader {
+    private final String duongDan; // biến lưu đường dẫn file gốc
 
-    private final String resourcePath; // Đường dẫn đến file từ điển gốc trong resources (để đọc)
-
-
-    // Constructor nhận đường dẫn file Resource (để đọc file gốc)
-    public DicDataLoader(String resourcePath) {
-        this.resourcePath = resourcePath;
-        System.out.println("DataLoader initialized with resource path (for reading): " + resourcePath);
-
-        // Đảm bảo file người dùng thêm tồn tại khi DataLoader được tạo
+    // constructor của class DicDataLoader
+    public DicDataLoader(String duongDan) {
+        this.duongDan = duongDan;        // 2. đảm bảo file ng dùng thêm tồn tại
         try {
-            UserWordFileManager.ensureFileExists(); // Gọi phương thức đảm bảo file tồn tại
+            UserWordFileManager.ensureFileExists();
         } catch (RuntimeException e) {
-            System.err.println("Error ensuring user added file exists: " + e.getMessage());
-            // Có thể ném tiếp e hoặc chỉ ghi log tùy mức độ nghiêm trọng
-            // throw e;
+            // 3. Xử lý lỗi (nếu có) khi đảm bảo file tồn tại
+            System.err.println("Lỗi đảm bảo tệp người dùng thêm vào tồn tại: " + e.getMessage());
         }
     }
+// đọc và xử lý dữ liệu từ 2 nguồn file khác nhau
+    public DicLoadResult loadWordsAndRawDefinitions() {
+        Map<String, String> tuDienTho = new HashMap<>();
+        Set<String> userAddedWordsSet = new HashSet<>();
+        int initialCount = 0;// đếm số từ tải từ thư viên
 
-    /**
-     * Đọc dữ liệu từ điển từ file resource gốc VÀ file lưu từ người dùng thêm.
-     * Phân tích từng dòng để lấy từ và toàn bộ phần còn lại của dòng (định nghĩa thô).
-     *
-     * @return DictionaryLoadResult chứa Map các từ/định nghĩa thô và Set các từ từ file người dùng thêm.
-     *         Trả về kết quả với Map/Set rỗng nếu có lỗi nghiêm trọng hoặc cả hai file đều trống/không tồn tại.
-     */
-    public DictionaryLoadResult loadWordsAndRawDefinitions() { // <-- Thay đổi kiểu trả về
-        Map<String, String> localDictionaryRaw = new HashMap<>();
-        Set<String> userAddedWordsSet = new HashSet<>(); // <-- Set để lưu từ người dùng thêm
-        int count = 0;
-
-        // --- Bước 1: Đọc từ file resource gốc (chỉ đọc) ---
-        try (InputStream is = getClass().getResourceAsStream(resourcePath);
+        System.out.println("Đang cố gắng tải từ điển gốc từ: " + duongDan);
+        try (InputStream is = getClass().getResourceAsStream(duongDan);
              BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
 
             if (is == null) {
-                System.err.println("Không tìm thấy file resource gốc: " + resourcePath);
-                // Không ném Exception ở đây để có thể tiếp tục đọc file người dùng thêm
-                // throw new RuntimeException("Resource file not found: " + resourcePath); // <-- Bỏ throw này
+                System.err.println("Không tìm thấy file resource gốc: " + duongDan + ". Sẽ chỉ tải từ file người dùng thêm (nếu có).");
             } else {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
+                    // tách word với định nghĩa
                     if (!line.isEmpty()) {
-                        // Logic phân tích dòng để lấy từ và phần định nghĩa thô
-                        int firstSpaceOrSlashIndex = -1;
-                        int spaceIndex = line.indexOf(' ');
-                        int slashIndex = line.indexOf('/');
+                        int firstKTorGC = -1;
+                        int khoangTrong = line.indexOf(' ');
+                        int gachCheo = line.indexOf('/');
 
-                        if (spaceIndex != -1 && slashIndex != -1) {
-                            firstSpaceOrSlashIndex = Math.min(spaceIndex, slashIndex);
-                        } else if (spaceIndex != -1) {
-                            firstSpaceOrSlashIndex = spaceIndex;
-                        } else if (slashIndex != -1) {
-                            firstSpaceOrSlashIndex = slashIndex;
-                        }
+                        if (khoangTrong != -1 && gachCheo != -1) firstKTorGC = Math.min(khoangTrong, gachCheo);
+                        else if (khoangTrong != -1) firstKTorGC = khoangTrong;
+                        else if (gachCheo != -1) firstKTorGC = gachCheo;
 
                         String word = "";
-                        String rawDefinitionPart = "";
+                        String dinhNghiaTho = "";
 
-                        if (firstSpaceOrSlashIndex != -1) {
-                            word = line.substring(0, firstSpaceOrSlashIndex).trim();
-                            rawDefinitionPart = line.substring(firstSpaceOrSlashIndex).trim();
+                        if (firstKTorGC != -1) {
+                            word = line.substring(0, firstKTorGC).trim();
+                            dinhNghiaTho = line.substring(firstKTorGC).trim();
                         } else {
                             word = line.trim();
-                            rawDefinitionPart = "";
                         }
 
                         if (!word.isEmpty()) {
-                            if (!localDictionaryRaw.containsKey(word)) { // Chỉ thêm nếu từ CHƯA tồn tại
-                                localDictionaryRaw.put(word, rawDefinitionPart);
-                                count++;
-                            } else {
-                                // System.out.println("Bỏ qua từ trùng lặp khi tải từ resource gốc: " + word);
-                                // Bỏ qua từ trùng trong file gốc, không cần ghi đè
+                            if (!tuDienTho.containsKey(word)) {// chỉ thêm từ nếu ch có trong Map
+                                tuDienTho.put(word, dinhNghiaTho);
+                                initialCount++;
+
                             }
                         } else {
                             System.err.println("Bỏ qua dòng không lấy được từ từ resource gốc: " + line);
                         }
                     }
                 }
-                System.out.println("Đã tải " + count + " từ từ file resource gốc.");
+                System.out.println("Đã tải " + initialCount + " từ từ file resource gốc.");
             }
-
-
         } catch (IOException e) {
-            System.err.println("Lỗi khi đọc file từ điển gốc: " + e.getMessage());
-            // Vẫn tiếp tục để đọc file người dùng thêm
+            System.err.println("Lỗi khi đọc file từ điển gốc (" + duongDan + "): " + e.getMessage());
+        } catch (NullPointerException e) {// trả về NULL
+            System.err.println("Lỗi NullPointerException khi đọc file resource gốc: " + duongDan + ". Có thể file không tồn tại hoặc đường dẫn sai. " + e.getMessage());
         }
 
-
-        // --- Bước 2: Đọc từ file lưu trữ từ người dùng thêm (gọi UserWordFileManager) ---
-        // Lấy tất cả các dòng từ file người dùng thêm
+        System.out.println("Đang cố gắng tải các từ do người dùng thêm vào...");
+        // lấy tất cả các dòng từ file ng dùng
         List<String> userAddedLines = UserWordFileManager.readAllLines();
-
         int addedCount = 0;
-        // Phân tích từng dòng đọc được từ file người dùng thêm và thêm vào Map + Set
         for (String line : userAddedLines) {
             String trimmedLine = line.trim();
             if (!trimmedLine.isEmpty()) {
-                // Logic phân tích dòng trong file user_added_words.txt
-                // Cần khớp với cách bạn format chuỗi newEntry trong appendWordToFile
-                // Giả định format là "từ **unclassified**..."
                 int starIndex = trimmedLine.indexOf("**");
                 String wordOnly = "";
                 String rawDefinitionPart = "";
@@ -124,18 +95,10 @@ public class DicDataLoader {
                     rawDefinitionPart = trimmedLine.substring(starIndex).trim();
                 } else {
                     wordOnly = trimmedLine.trim();
-                    rawDefinitionPart = ""; // Trường hợp lỗi định dạng hoặc file cũ
                 }
-
                 if (!wordOnly.isEmpty()) {
-                    // Luôn đánh dấu từ này là từ người dùng thêm
                     userAddedWordsSet.add(wordOnly);
-
-                    // Thêm hoặc ghi đè vào map chính
-                    // Nếu từ đã có trong map (từ file gốc), sẽ ghi đè định nghĩa bằng định nghĩa từ file người dùng thêm
-                    // Nếu từ chưa có, sẽ thêm mới
-                    localDictionaryRaw.put(wordOnly, rawDefinitionPart);
-                    // Không cần tăng count ở đây vì map.put sẽ xử lý việc này
+                    tuDienTho.put(wordOnly, rawDefinitionPart);
                     addedCount++;
                 } else {
                     System.err.println("Bỏ qua dòng không lấy được từ từ file thêm: " + line);
@@ -143,11 +106,7 @@ public class DicDataLoader {
             }
         }
         System.out.println("Đã tải " + addedCount + " từ từ file thêm.");
-
-
-        System.out.println("Tổng số từ tải thành công từ cả hai nguồn: " + localDictionaryRaw.size());
-
-        // <-- Trả về đối tượng DictionaryLoadResult
-        return new DictionaryLoadResult(localDictionaryRaw, userAddedWordsSet);
+        System.out.println("Tổng số từ trong bộ nhớ (tuDienTho): " + tuDienTho.size());
+        return new DicLoadResult(tuDienTho, userAddedWordsSet);
     }
 }
