@@ -40,12 +40,12 @@ Các tính năng mà ứng dụng sẽ hỗ trợ.
 ## Trò chơi
 - Giúp người học giải trí
 - Mang tính học thuật, hỗ trợ việc học từ vựng
-  ![](Dictionary/src/main/resources/picture/Demo/z6573239373482_64864471e360b6eae113ccbab52c135d.jpgg)
+  ![](Dictionary/src/main/resources/picture/Demo/z6573239373482_64864471e360b6eae113ccbab52c135d.jpg)
 - Hai game:
     * Trắc nghiệm (Quizz)
       ![](Dictionary/src/main/resources/picture/Demo/z6573241186558_7936cb07083fd29110ccb501674cce74.jpg)
     * Tìm từ (Wordle)
-      ![](Dictionary/src/main/resources/picture/Demo/z6573240127698_b34d2b129ec2daab1191c29be05e81c0.jpgg)
+      ![](Dictionary/src/main/resources/picture/Demo/z6573240127698_b34d2b129ec2daab1191c29be05e81c0.jpg)
     
 
 
