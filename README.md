@@ -1,6 +1,6 @@
 # BaChuTeEnglishApp
 
-Final Project for OOP (INT2204 2)
+Final Project for OOP
 <hr>
 
 
