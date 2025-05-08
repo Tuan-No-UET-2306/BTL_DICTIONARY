@@ -34,21 +34,19 @@ Các tính năng mà ứng dụng sẽ hỗ trợ.
 - ![](Dictionary/src/main/resources/picture/Demo/z6573236504877_9b6bb28cbaa7e0323bcf82c4fc5fe8ee.jpg)
 
 ## Dịch thuật
-- Sử dụng công cụ dịch thuật của Google Translate để dịch từ vựng, câu văn.
-- Hỗ trợ chức năng đọc đoạn văn
-  ![](./preview/prev3.png)
+- Sử dụng công cụ dịch thuật của MyMemory để dịch từ vựng, câu văn.
+  ![](Dictionary/src/main/resources/picture/Demo/z6573235145178_e68fa02aab6ec34a7ba82dc73dda9586.jpg)
 
 ## Trò chơi
 - Giúp người học giải trí
 - Mang tính học thuật, hỗ trợ việc học từ vựng
-  ![](./preview/prev4.png)
-- Ba game:
+  ![](Dictionary/src/main/resources/picture/Demo/z6573239373482_64864471e360b6eae113ccbab52c135d.jpgg)
+- Hai game:
     * Trắc nghiệm (Quizz)
-      ![](./preview/prev5.png)
+      ![](Dictionary/src/main/resources/picture/Demo/z6573241186558_7936cb07083fd29110ccb501674cce74.jpg)
     * Tìm từ (Wordle)
-      ![](./preview/prev6.png)
-    * Đuổi hình bắt chữ (Catch the word)
-      ![](./preview/prev7.png)
+      ![](Dictionary/src/main/resources/picture/Demo/z6573240127698_b34d2b129ec2daab1191c29be05e81c0.jpgg)
+    
 
 
 # Công nghệ sử dụng
@@ -56,15 +54,5 @@ Các kĩ thuật, công nghệ sử dụng để xây dựng ứng dụng.
 
 ## JavaFX
 - Sử dụng JavaFX để tạo giao diện đồ hoạ cho ứng dụng.
-## Google Translate API
-- Sử dụng Google Translate API để dịch thuật.
-- Ngoài ra, Google Translate API còn sử dụng để phát âm
-## Trie
-- Sử dụng cấu trúc dữ liệu Trie để lưu trữ từ điển.
-- Trie còn được sử dụng để tìm kiếm/sửa/xóa từ vựng với tốc độ nhanh chóng.
-- Trie cho kết quả chính xác 100% với độ phức tạp tuyến tính so với HashMap có khả năng bị trùng và độ phức tạp khó tính toán.
-## Hỗ trợ xử lý dữ liệu dưới dạng MySQL/SQLite
-## Cây kế thừa của từ điển
-![](./UML.png)
-Có dependencies:
-![](./UMLwithDependencies.png)
+## MyMemory API
+- Sử dụng MyMemory API để dịch thuật.
