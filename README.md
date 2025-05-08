@@ -31,7 +31,7 @@ Các tính năng mà ứng dụng sẽ hỗ trợ.
 - Nghe phát âm của từ vựng.
 - Thêm từ vựng vào mục yêu thích.
 - Khởi tạo lại dữ liệu từ điển về ban đầu.
-- ![](./Demo/z6573236504877_9b6bb28cbaa7e0323bcf82c4fc5fe8ee.jpg)
+- ![](Dictionary/src/main/resources/picture/Demo/z6573236504877_9b6bb28cbaa7e0323bcf82c4fc5fe8ee.jpg)
 
 ## Dịch thuật
 - Sử dụng công cụ dịch thuật của Google Translate để dịch từ vựng, câu văn.
