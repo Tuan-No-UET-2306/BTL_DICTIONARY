@@ -3,34 +3,26 @@ package com.example.dictionary; // Đảm bảo đúng package
 import Function.ChangeStage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-// Bỏ import FXMLLoader, Parent, Scene, Stage nếu không dùng chức năng quay về main.fxml nữa
-// import javafx.fxml.FXMLLoader;
-// import javafx.scene.Parent;
-// import javafx.scene.Scene;
-// import javafx.stage.Stage;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.scene.Node;
+import javafx.application.Platform; // Import Platform for runLater
 
-// Bỏ import IOException nếu không dùng chức năng quay về main.fxml nữa
-// import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+// import java.util.Collections; // Nếu bạn muốn xáo trộn câu hỏi
 
 public class QuizController implements Initializable {
 
-    // Lớp nội bộ hoặc record để biểu diễn câu hỏi
-    private record Question(String questionText, String[] options, String correctAnswer) {}
+    // KHÔNG CÒN DÙNG RECORD NỮA
+    // private record Question(String questionText, String[] options, String correctAnswer) {}
 
     // Các thành phần FXML
     @FXML private AnchorPane rootPane;
@@ -48,34 +40,48 @@ public class QuizController implements Initializable {
 
     // Trạng thái Quiz
     private int currentQuestionIndex = 0;
-    private List<Question> questions;
+    private List<Question> questions; // Sử dụng lớp Question mới
 
-    // Lưu trữ VBox thông báo được tạo bằng code
-    private VBox resultNotificationVBox = null;
+    // Manager cho VBox thông báo
+    private ResultNotificationManager resultNotificationManager;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println("Quiz Controller Initialized.");
-        initializeQuestions(); // Khởi tạo danh sách câu hỏi
 
         if (rootPane == null) {
             System.err.println("Lỗi: rootPane chưa được inject! Kiểm tra fx:id trong FXML.");
             return;
         }
 
+        resultNotificationManager = new ResultNotificationManager(
+                rootPane,
+                this::proceedToNextQuestionFromNotification,
+                this::endQuizFromNotification
+        );
+
+        initializeQuestions(); // Khởi tạo danh sách câu hỏi
+
         if (questions != null && !questions.isEmpty()) {
             loadQuestion(currentQuestionIndex);
         } else {
-            // Xử lý khi không có câu hỏi
             if(questionLabel != null) questionLabel.setText("Không có câu hỏi nào.");
             if(answersGrid != null) answersGrid.setVisible(false);
             if(nextButton != null) nextButton.setDisable(true);
-            if(backButton != null) backButton.setDisable(true); // Disable cả back nếu không có câu hỏi
+            if(backButton != null) backButton.setDisable(true);
         }
 
-        // Gán Tooltip cho các nút điều hướng
         if(nextButton != null) nextButton.setTooltip(new Tooltip("Go to the next question"));
-        if(backButton != null) backButton.setTooltip(new Tooltip("Go to the previous question")); // Sửa tooltip
+        if(backButton != null) backButton.setTooltip(new Tooltip("Go to the previous question"));
+
+        // Thử nghiệm chuyển focus để giải quyết vấn đề notification tự hiện (nếu có)
+        // Bạn có thể bật/tắt dòng này để kiểm tra
+        if (rootPane != null) {
+            Platform.runLater(() -> {
+                rootPane.requestFocus();
+                System.out.println("DEBUG: Focus requested on rootPane in initialize.");
+            });
+        }
     }
 
     // Phương thức khởi tạo danh sách câu hỏi
@@ -95,206 +101,204 @@ public class QuizController implements Initializable {
         // Collections.shuffle(questions); // Tùy chọn: Xáo trộn câu hỏi
     }
 
-    // --- Xử lý sự kiện cho nút Back (Câu hỏi trước) ---
     @FXML
     void handleBackAction(ActionEvent event) {
-        removeResultNotification(); // Xóa VBox thông báo nếu đang hiển thị
+        if (resultNotificationManager != null) resultNotificationManager.hide();
 
-        // Chỉ quay lại câu trước nếu không phải đang ở câu đầu tiên (index > 0)
         if (currentQuestionIndex > 0) {
             System.out.println("Back button clicked! Going to previous question.");
-            currentQuestionIndex--; // Giảm chỉ số câu hỏi đi 1
-            loadQuestion(currentQuestionIndex); // Tải lại câu hỏi ở chỉ số mới
+            currentQuestionIndex--;
+            loadQuestion(currentQuestionIndex);
         } else {
             System.out.println("Back button clicked, but already at the first question.");
-            // Không làm gì khi ở câu đầu tiên
         }
     }
+    //đầu tiên ta khởi tạo biến currentQuestionIndex để đếm số câu hỏi (tránh mức tràn bộ nhớ cho phép)
+    //tiếp theo nút back action sẽ có tác dụng cập nhật câu hỏi trước đó bằng phương thức loadquestion
 
-    // --- Xử lý sự kiện cho nút Next chính ---
     @FXML
     void handleNextAction(ActionEvent event) {
-        removeResultNotification();
-        System.out.println("Next button clicked!");
-        if (currentQuestionIndex + 1 < questions.size()) { // Kiểm tra nếu còn câu hỏi tiếp theo
+        if (resultNotificationManager != null) resultNotificationManager.hide();
+        System.out.println("Next button (main) clicked!");
+        if (currentQuestionIndex + 1 < questions.size()) {
             currentQuestionIndex++;
             loadQuestion(currentQuestionIndex);
         } else {
-            System.out.println("End of quiz reached.");
-            showEndOfQuiz(); // Hiển thị trạng thái kết thúc quiz
+            System.out.println("End of quiz reached by main next button.");
+            showEndOfQuiz();
+        }
+    }
+    //tương tự nut next co chức năng tương tự và gọi phương thức load question để update câu hỏi trường hợp currentQuestionindex số lượng thì game quizz kết thúc
+
+    private void proceedToNextQuestionFromNotification() {
+        System.out.println("Proceeding to next question from notification.");
+        // resultNotificationManager.hide() đã được gọi bên trong manager rồi
+        if (currentQuestionIndex + 1 < questions.size()) {
+            handleNextAction(null); // Gọi handleNextAction chung để xử lý
+        } else {
+            System.err.println("Error: proceedToNextQuestionFromNotification called on last question. Should call endQuiz.");
+            showEndOfQuiz(); // Xử lý như kết thúc quiz
         }
     }
 
-    // --- Xử lý sự kiện khi người dùng chọn một đáp án ---
+    private void endQuizFromNotification() {
+        System.out.println("Ending quiz from notification.");
+        // resultNotificationManager.hide() đã được gọi bên trong manager rồi
+        showEndOfQuiz();
+    }
+
+
+    // ... (trong QuizController.java)
+
     @FXML
     void handleAnswerAction(ActionEvent event) {
-        // Không xử lý nếu VBox thông báo đang hiển thị
-        if (resultNotificationVBox != null) {
+        // ... (các dòng debug và kiểm tra ban đầu giữ nguyên) ...
+
+        if (resultNotificationManager != null && resultNotificationManager.isShowing()) {
+            // ...
             return;
         }
-        // Không xử lý nếu quiz đã kết thúc
-        if (currentQuestionIndex >= questions.size()) {
-            System.out.println("Quiz already finished. Cannot answer.");
+        if (questions == null || questions.isEmpty() || currentQuestionIndex >= questions.size()) {
+            // ...
             return;
         }
 
-        Button clickedButton = (Button) event.getSource();
+        Button clickedButton = null;
+        if (event != null && event.getSource() instanceof Button) {
+            clickedButton = (Button) event.getSource();
+        } else {
+            // ...
+            return;
+        }
+
         String chosenAnswer = clickedButton.getText();
-        System.out.println("Answer chosen: " + chosenAnswer);
+        // ...
 
-        Question currentQ = questions.get(currentQuestionIndex); // Lấy câu hỏi hiện tại
-        boolean isCorrect = checkAnswer(currentQ, chosenAnswer); // Kiểm tra đáp án
+        Question currentQ = questions.get(currentQuestionIndex);
 
-        disableInteraction(); // Vô hiệu hóa các nút
-        showResultNotification(isCorrect, currentQ.correctAnswer()); // Hiển thị VBox thông báo
-    }
+        // === THAY ĐỔI CHÍNH ===
+        // Gọi trực tiếp phương thức isCorrect() từ đối tượng Question
+        boolean isCorrect = currentQ.isCorrect(chosenAnswer);
+        // =====================
 
-    // --- Hàm tạo VBox thông báo bằng code và hiển thị ---
-    private void showResultNotification(boolean isCorrect, String correctAnswer) {
-        resultNotificationVBox = new VBox(15);
-        resultNotificationVBox.setAlignment(Pos.CENTER);
-        resultNotificationVBox.setPadding(new Insets(25, 30, 25, 30));
-
-        Label titleMsgLabel = new Label();
-        Label detailsMsgLabel = new Label();
-        Button notificationNextButton = new Button("NEXT");
-
-        // Đặt nội dung và gán Style Class dựa trên kết quả
-        if (isCorrect) {
-            titleMsgLabel.setText("CHÚC MỪNG!");
-            detailsMsgLabel.setText("Bạn đã trả lời đúng!\nĐáp án chính xác là: " + correctAnswer);
-            resultNotificationVBox.getStyleClass().add("result-vbox-correct");
+        disableInteraction();
+        boolean isLastQuestion = (currentQuestionIndex + 1 >= questions.size());
+        // ...
+        if (resultNotificationManager != null) {
+            resultNotificationManager.show(isCorrect, currentQ.getCorrectAnswer(), isLastQuestion);
         } else {
-            titleMsgLabel.setText("RẤT TIẾC!");
-            detailsMsgLabel.setText("Bạn đã trả lời sai.\nĐáp án đúng là: " + correctAnswer);
-            resultNotificationVBox.getStyleClass().add("result-vbox-incorrect");
-        }
-        // Gán các class chung để CSS áp dụng
-        resultNotificationVBox.getStyleClass().add("result-vbox");
-        titleMsgLabel.getStyleClass().add("result-title");
-        detailsMsgLabel.getStyleClass().add("result-details");
-        notificationNextButton.getStyleClass().add("result-next-button");
-
-        // Gắn sự kiện cho nút NEXT trong VBox
-        notificationNextButton.setOnAction(e -> {
-            removeResultNotification(); // Xóa VBox
-            if (currentQuestionIndex + 1 < questions.size()) {
-                handleNextAction(null); // Chuyển câu hỏi tiếp theo
-            } else {
-                showEndOfQuiz(); // Kết thúc quiz nếu đây là câu cuối
-            }
-        });
-
-        resultNotificationVBox.getChildren().addAll(titleMsgLabel, detailsMsgLabel, notificationNextButton);
-
-        // Thêm VBox vào rootPane và định vị
-        if (rootPane != null) {
-            rootPane.getChildren().add(resultNotificationVBox);
-            AnchorPane.setTopAnchor(resultNotificationVBox, 150.0);
-            AnchorPane.setLeftAnchor(resultNotificationVBox, 200.0);
-            AnchorPane.setRightAnchor(resultNotificationVBox, 200.0);
-        } else {
-            System.err.println("Không thể thêm VBox thông báo vì rootPane là null!");
-            resultNotificationVBox = null; // Reset nếu lỗi
-            enableInteraction(); // Cho phép tương tác lại nếu không hiện được VBox
+            // ...
         }
     }
 
-    // --- Hàm xóa VBox thông báo ---
-    private void removeResultNotification() {
-        if (resultNotificationVBox != null && rootPane != null) {
-            rootPane.getChildren().remove(resultNotificationVBox);
-            resultNotificationVBox = null; // Reset biến tham chiếu
-        }
-    }
+    // === PHƯƠNG THỨC checkAnswer ĐÃ BỊ XÓA KHỎI QuizController ===
+    // private boolean checkAnswer(Question question, String chosenAnswer) {
+    //     // ...
+    // }
+    // ==============================================================
 
-    // --- Các hàm tiện ích để quản lý trạng thái nút ---
+// ... (phần còn lại của QuizController giữ nguyên)
+
     private void disableInteraction() {
         setNodesDisabled(true, answersGrid, nextButton, backButton);
     }
+    //vô hiệu hóa làm mờ các nút chính
 
     private void enableInteraction() {
-        setNodesDisabled(false, answersGrid); // Bật lại các nút trả lời
+        setNodesDisabled(false, answersGrid);
         if (backButton != null) {
-            backButton.setDisable(currentQuestionIndex <= 0); // Chỉ disable back ở câu đầu
+            backButton.setDisable(currentQuestionIndex <= 0);
         }
+        // kích hoạt lại làm cho các nút được tương tác trừ trường hợp câu hỏi đầu tiên
         if (nextButton != null) {
-            // Disable nút next chính nếu đang ở câu cuối
-            boolean isLastQuestion = (currentQuestionIndex >= questions.size() - 1);
-            nextButton.setDisable(isLastQuestion);
+            boolean isEffectivelyLastQuestion = (questions == null || questions.isEmpty() || currentQuestionIndex >= questions.size() - 1);
+            nextButton.setDisable(isEffectivelyLastQuestion);
         }
     }
 
-    // Hàm tiện ích để bật/tắt nhiều node (bao gồm cả các nút trong GridPane)
     private void setNodesDisabled(boolean disabled, Node... nodes) {
         for (Node node : nodes) {
             if (node != null) {
                 if (node instanceof GridPane) {
-                    // Vô hiệu hóa/Kích hoạt tất cả các nút con trong GridPane
                     ((GridPane) node).getChildren().forEach(child -> child.setDisable(disabled));
                 } else {
-                    node.setDisable(disabled); // Áp dụng cho các nút khác
+                    node.setDisable(disabled);
                 }
             }
         }
     }
 
-    // --- Hàm tải dữ liệu câu hỏi lên giao diện ---
     private void loadQuestion(int questionIndex) {
-        // Kiểm tra index hợp lệ
-        if (questionIndex < 0 || questionIndex >= questions.size()) {
-            System.err.println("Index câu hỏi không hợp lệ: " + questionIndex);
-            // Không nên gọi showEndOfQuiz ở đây vì có thể người dùng bấm back từ câu 0
-            // Chỉ cần đảm bảo không làm gì nếu index sai
-            return;
+        System.out.println("DEBUG: loadQuestion called for index: " + questionIndex);
+
+        // 1. Kiểm tra đầu vào cơ bản (danh sách câu hỏi và chỉ số)
+        //    Nếu không hợp lệ, thiết lập trạng thái lỗi và thoát.
+        if (questions == null || questions.isEmpty() || questionIndex < 0 || questionIndex >= questions.size()) {
+            System.err.println("Invalid question index or no questions: " + questionIndex);
+            // Thiết lập UI cho trạng thái lỗi/không có câu hỏi
+            if (questionLabel != null) questionLabel.setText("Không thể tải câu hỏi.");
+            if (answersGrid != null) answersGrid.setVisible(false); // Ẩn khu vực trả lời
+            // Vô hiệu hóa các nút điều hướng chính
+            if (nextButton != null) nextButton.setDisable(true);
+            if (backButton != null) backButton.setDisable(true);
+            return; // Thoát sớm
         }
 
-        Question currentQ = questions.get(questionIndex); // Lấy câu hỏi
+        // 2. Lấy câu hỏi hiện tại (đã qua kiểm tra ở bước 1)
+        Question currentQ = questions.get(questionIndex);
 
-        // Cập nhật các thành phần UI (kiểm tra null trước)
-        if(questionLabel != null) questionLabel.setText(currentQ.questionText());
-        if(answersGrid != null) answersGrid.setVisible(true); // Đảm bảo grid hiển thị
-
-        // Gán text cho các nút trả lời (kiểm tra mảng options)
-        if (currentQ.options() != null && currentQ.options().length == 4) {
-            if(answerButton1 != null) answerButton1.setText(currentQ.options()[0]);
-            if(answerButton2 != null) answerButton2.setText(currentQ.options()[1]);
-            if(answerButton3 != null) answerButton3.setText(currentQ.options()[2]);
-            if(answerButton4 != null) answerButton4.setText(currentQ.options()[3]);
-        } else {
-            System.err.println("Lỗi: Câu hỏi " + questionIndex + " không đủ 4 lựa chọn.");
-            // Xử lý lỗi hiển thị (ví dụ: đặt text "Lỗi" cho nút)
-            if(answerButton1 != null) answerButton1.setText("Lỗi");
-            if(answerButton2 != null) answerButton2.setText("Lỗi");
-            if(answerButton3 != null) answerButton3.setText("Lỗi");
-            if(answerButton4 != null) answerButton4.setText("Lỗi");
+        // 3. Hiển thị nội dung câu hỏi và đảm bảo khu vực trả lời được hiển thị
+        if (questionLabel != null) {
+            questionLabel.setText(currentQ.getQuestionText());
+        }
+        if (answersGrid != null) {
+            answersGrid.setVisible(true); // Đảm bảo lưới đáp án hiển thị
+            // Kích hoạt lại các nút trong lưới (sẽ được enableInteraction() xử lý chi tiết hơn)
+            // setNodesDisabled(false, answersGrid); // Có thể gọi trực tiếp hoặc để enableInteraction xử lý
         }
 
-        enableInteraction(); // Kích hoạt/Vô hiệu hóa các nút điều hướng cho phù hợp
-        System.out.println("Đã tải câu hỏi " + (questionIndex + 1) + "/" + questions.size());
+        // 4. Lấy và hiển thị các lựa chọn lên các nút trả lời
+        //    Giả định: currentQ.getOptions() luôn trả về mảng String[4] hợp lệ
+        //    do constructor của Question đã đảm bảo điều này.
+        String[] options = currentQ.getOptions();
+
+        // Gán trực tiếp, vì ta tin tưởng Question constructor đã validate options
+        // Các kiểm tra (button != null) vẫn cần thiết phòng trường hợp FXML chưa inject đúng
+        if (answerButton1 != null) answerButton1.setText(options[0]);
+        if (answerButton2 != null) answerButton2.setText(options[1]);
+        if (answerButton3 != null) answerButton3.setText(options[2]);
+        if (answerButton4 != null) answerButton4.setText(options[3]);
+
+        // Nếu giả định về Question constructor không đúng, và options có thể không hợp lệ ở đây,
+        // thì khối if/else kiểm tra options.length == 4 là cần thiết.
+        // Tuy nhiên, để "rút gọn" và theo thiết kế tốt, Question nên tự đảm bảo tính hợp lệ của nó.
+
+        // 5. Kích hoạt lại các tương tác và log
+        enableInteraction(); // Quan trọng: Kích hoạt lại các nút trả lời và điều chỉnh nút Next/Back
+        System.out.println("Đã tải câu hỏi " + (questionIndex + 1) + "/" + questions.size() + ": " + currentQ.getQuestionText());
     }
 
-    // --- Hàm kiểm tra đáp án ---
-    private boolean checkAnswer(Question question, String chosenAnswer) {
-        // So sánh text người dùng chọn với đáp án đúng lưu trong Question
-        return chosenAnswer.equals(question.correctAnswer());
-    }
 
-    // --- Hàm xử lý khi kết thúc Quiz ---
     private void showEndOfQuiz() {
         System.out.println("Quiz đã kết thúc!");
-        // Cập nhật UI để báo quiz đã xong
-        if(questionLabel != null) questionLabel.setText("Chúc mừng bạn đã hoàn thành Quiz!");
-        if(answersGrid != null) answersGrid.setVisible(false); // Ẩn các nút trả lời
-        if(nextButton != null) nextButton.setDisable(true); // Vô hiệu hóa nút next chính
-        if(backButton != null) backButton.setDisable(false); // Giữ nút back bật để có thể xem lại câu cuối
+        if (resultNotificationManager != null) resultNotificationManager.hide();
 
-        // TODO: Thêm logic hiển thị điểm số cuối cùng hoặc nút "Chơi lại"
+        if(questionLabel != null) questionLabel.setText("Chúc mừng bạn đã hoàn thành Quiz!");
+        if(answersGrid != null) answersGrid.setVisible(false);
+        if(nextButton != null) nextButton.setDisable(true);
+        if(backButton != null) {
+            // Chỉ bật nút back nếu không phải là câu hỏi đầu tiên hoặc không có câu hỏi nào
+            backButton.setDisable(questions == null || questions.isEmpty() || currentQuestionIndex <= 0);
+        }
     }
 
-    public void handleExit(ActionEvent event) {
-        exitQuizz.setOnAction(e -> {
-            ChangeStage.changeStage(exitQuizz, "game_tab.fxml", getClass());
-        });
+    @FXML // Đảm bảo @FXML được thêm nếu phương thức này được gọi từ FXML (mặc dù trong code hiện tại nó được gọi từ code)
+    public void handleExit(ActionEvent event) { // Thêm @FXML nếu cần
+        // Có thể không cần setOnAction ở đây nếu đã set trong FXML
+        // exitQuizz.setOnAction(e -> {
+        //     ChangeStage.changeStage(exitQuizz, "game_tab.fxml", getClass());
+        // });
+        // Nếu onAction đã được đặt trong FXML, dòng sau là đủ:
+        ChangeStage.changeStage(exitQuizz, "game_tab.fxml", getClass());
     }
 }

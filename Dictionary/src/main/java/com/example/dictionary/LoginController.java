@@ -56,19 +56,19 @@ public class LoginController {
 
         // Kiểm tra xem người dùng đã nhập đủ thông tin chưa.
         if (username.isEmpty() || password.isEmpty()) {
-            showMessage("Tên đăng nhập và mật khẩu không được để trống.", true); // Hiển thị thông báo lỗi (isError = true).
+            showMessage("Tên đăng nhập và mật khẩu không được để trống."); // Hiển thị thông báo lỗi (isError = true).
             return; // Dừng xử lý nếu thiếu thông tin.
         }
 
         // Gọi phương thức validateLogin từ lớp AccountManager để kiểm tra thông tin đăng nhập.
         if (AccountManager.validateLogin(username, password)) {
             // Nếu đăng nhập thành công
-            showMessage("Đăng nhập thành công!", false); // Hiển thị thông báo thành công (isError = false).
+            showMessage("Đăng nhập thành công!"); // Hiển thị thông báo thành công (isError = false).
             switchToMainScene(); // Chuyển sang màn hình chính của ứng dụng.
         } else {
             // Nếu đăng nhập thất bại (sai username hoặc password)
             // AccountManager đã in lỗi cụ thể hơn ra console, ở đây chỉ cần thông báo chung.
-            showMessage("Tên đăng nhập hoặc mật khẩu không hợp lệ.", true); // Hiển thị thông báo lỗi.
+            showMessage("Tên đăng nhập hoặc mật khẩu không hợp lệ."); // Hiển thị thông báo lỗi.
         }
     }
 
@@ -84,21 +84,21 @@ public class LoginController {
 
         // Kiểm tra xem người dùng đã nhập đủ thông tin để đăng ký chưa.
         if (username.isEmpty() || password.isEmpty()) {
-            showMessage("Cần nhập Tên đăng nhập và Mật khẩu để đăng ký.", true); // Thông báo lỗi.
+            showMessage("Cần nhập Tên đăng nhập và Mật khẩu để đăng ký."); // Thông báo lỗi.
             return; // Dừng xử lý.
         }
 
         // Gọi phương thức signUp từ lớp AccountManager để thử đăng ký tài khoản mới.
         if (AccountManager.signUp(username, password)) {
             // Nếu đăng ký thành công
-            showMessage("Đăng ký thành công! Bây giờ bạn có thể đăng nhập.", false); // Thông báo thành công.
+            showMessage("Đăng ký thành công! Bây giờ bạn có thể đăng nhập."); // Thông báo thành công.
             passwordField.clear(); // Xóa trắng ô mật khẩu sau khi đăng ký thành công.
             usernameField.clear(); // (Tùy chọn) Xóa trắng cả ô username.
             usernameField.requestFocus(); // Đưa con trỏ nhập liệu về lại ô username để tiện đăng nhập.
         } else {
             // Nếu đăng ký thất bại (thường là do username đã tồn tại hoặc không hợp lệ theo logic của AccountManager).
             // AccountManager đã in lỗi cụ thể ra console.
-            showMessage("Tên đăng nhập đã tồn tại hoặc không hợp lệ.", true); // Thông báo lỗi chung.
+            showMessage("Tên đăng nhập đã tồn tại hoặc không hợp lệ."); // Thông báo lỗi chung.
         }
     }
 
@@ -107,28 +107,15 @@ public class LoginController {
      * Có thể thay đổi màu sắc hoặc style của thông báo tùy thuộc vào đó là lỗi hay thành công.
      *
      * @param message Nội dung thông báo cần hiển thị.
-     * @param isError `true` nếu là thông báo lỗi (thường màu đỏ), `false` nếu là thông báo thành công (thường màu xanh).
      */
-    private void showMessage(String message, boolean isError) {
+    private void showMessage(String message) {
         messageLabel.setText(message); // Đặt nội dung văn bản cho Label.
 
         // --- Áp dụng CSS Styling (Tùy chọn nhưng nên dùng) ---
         // Xóa các style class cũ trước khi thêm style mới để tránh xung đột.
-        messageLabel.getStyleClass().removeAll("success-message", "error-message");
 
-        if (isError) {
-            // Thêm style class "error-message". Bạn cần định nghĩa class này trong file CSS
-            // Ví dụ trong file CSS: .error-message { -fx-text-fill: red; -fx-font-weight: bold; }
-            messageLabel.getStyleClass().add("error-message");
-            // Cài đặt màu chữ trực tiếp làm phương án dự phòng nếu CSS không hoạt động hoặc không được định nghĩa.
-            messageLabel.setTextFill(Color.RED);
-        } else {
-            // Thêm style class "success-message".
-            // Ví dụ trong file CSS: .success-message { -fx-text-fill: green; }
-            messageLabel.getStyleClass().add("success-message");
-            // Phương án dự phòng
-            messageLabel.setTextFill(Color.GREEN);
-        }
+
+
     }
 
     /**

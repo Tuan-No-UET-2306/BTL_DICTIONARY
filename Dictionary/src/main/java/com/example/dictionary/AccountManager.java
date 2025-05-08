@@ -82,10 +82,5 @@ public class AccountManager {
     // --- Khối khởi tạo tĩnh (Static Initializer Block) ---
     // Đoạn code trong khối này sẽ được thực thi TỰ ĐỘNG và CHỈ MỘT LẦN DUY NHẤT
     // ngay khi lớp AccountManager được nạp vào bộ nhớ lần đầu tiên.
-    static {
-        // Tự động gọi phương thức signUp để thêm một tài khoản mẫu vào danh sách.
-        // Mục đích: Có sẵn dữ liệu để kiểm thử (test) ngay khi chương trình chạy mà không cần đăng ký thủ công.
-        signUp("testuser", "password123");
-        System.out.println("Tài khoản testuser đã được tự động tạo."); // Thông báo rằng tài khoản test đã được thêm.
-    }
+
 }
