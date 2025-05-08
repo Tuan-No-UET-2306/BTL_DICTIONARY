@@ -1,4 +1,4 @@
-# EnglishApp
+# BaChuTeEnglishApp
 
 Final Project for OOP (INT2204 2)
 <hr>
