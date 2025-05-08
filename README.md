@@ -26,10 +26,8 @@ Final Project for OOP
 # Chức năng
 Các tính năng mà ứng dụng sẽ hỗ trợ.
 ## Sử dụng từ điển
-- Tra cứu từ vựng tiếng Anh: phát âm, từ loại, nghĩa, từ đồng nghĩa, trái nghĩa.
+- Tra cứu từ vựng tiếng Anh: từ loại, nghĩa, từ đồng nghĩa, trái nghĩa.
 - Thêm/sửa/xóa từ vựng.
-- Nghe phát âm của từ vựng.
-- Thêm từ vựng vào mục yêu thích.
 - Khởi tạo lại dữ liệu từ điển về ban đầu.
 - ![](Dictionary/src/main/resources/picture/Demo/z6573236504877_9b6bb28cbaa7e0323bcf82c4fc5fe8ee.jpg)
 
